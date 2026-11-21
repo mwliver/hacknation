@@ -183,7 +183,7 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 - [x] Faza 2 – flaga AED na zasobie, walidator, raport w adminie i API, `POST /aed/validate` (2026-11-21)
 - [x] Faza 3 – agregacja, deduplikacja, indeks `aed`, API `/aed`, `nearest`, `{id}`, `stats` (2026-11-21)
 - [x] Faza 4 – frontend: strona akcji, mapa, kreator dysponenta, odznaki (2026-11-21; weryfikacja 1440/360 px i klawiatury Playwrightem w fazie 5)
-- [ ] Faza 5
+- [x] Faza 5 – Playwright (e2e + zrzuty), testy i lint obu repo, dokumentacja zgłoszenia (2026-11-21)
 
 ### Znane problemy / ryzyka
 - Brak lokalnego Pythona – testy i komendy backendu tylko przez `docker compose -f docker-compose.local.yml`.
@@ -262,3 +262,20 @@ AED_ENABLED=True python manage.py aed_demo_data          # wypisze AED_NATIONAL_
 - Błędy wykryte przez e2e i poprawione: (1) trasy dzieci lazy nie były rozpoznawane (brak `LocalizeRouterModule.forChild`, a `!` w tym portalu oznacza segment nietłumaczony); (2) kreator nie importował `FormsModule` → `<form (ngSubmit)>` robił natywny submit i przeładowanie; (3) istniejący `LeafletService` ładuje Leaflet przez `require()`, którego dev-server (esbuild/Vite) nie obsługuje – mapa AED ładuje Leaflet przez `import('leaflet')` tylko w przeglądarce (współdzielonego serwisu nie zmieniałem; istniejące mapy portalu w `ng serve` mają ten sam problem); (4) poprawki czytelności listy (godziny bez `code`, teksty dostępu w osobnych liniach).
 - Pierwsza wizyta pokazuje modal RODO portalu (`localStorage OD_isAcquintedWithRodo`) – e2e ustawia go jak dla powracającego użytkownika.
 - Dokumentacja: `README_AED.md` (opis, diagram Mermaid, uruchomienie, endpointy), `KROKI_UZYTKOWNIKA.md`, `OGRANICZENIA.md`, `ZRZUTY_EKRANU.md`, pliki z sekcji 3.5.
+
+### Stan końcowy testów i lintu (2026-11-21)
+| Repozytorium | Wynik |
+|---|---|
+| backend – `mcod/aed` (pytest) | 213 passed |
+| backend – regresja `mcod/resources` (faza 2), `mcod/core` + `mcod/search` (faza 3) | 1115 passed / 1 skipped / 4 xfailed / 2 xpassed; 410 passed / 2 xfailed; 0 failed |
+| backend – lint AED (isort, black 24.3, flake8 – wersje z pre-commit) | OK |
+| frontend – Jest (cały projekt) | 140/140 zestawów, 948/948 testów |
+| frontend – Playwright `npm run e2e:aed` | 10/10 |
+| frontend – `ng build --configuration development` | OK |
+| frontend – ESLint kodu AED (`src/app/pages/aed`, `e2e`, `playwright.config.ts`) | 0 błędów |
+| frontend – `npm run lint` (cały projekt) | 882 błędy w 285 plikach – **zastane**, żaden w kodzie AED; w 2 zmienionych plikach (`dataset-resource.component.ts`, `resource-item-info.component.ts`) dopisałem tylko import, błędy są w istniejących liniach |
+
+### Do zrobienia poza prototypem
+- Uruchomić stack z tego katalogu i wykonać ręczne zrzuty 8–12 z `ZRZUTY_EKRANU.md` (strona zasobu z odznaką, zbiór krajowy, panel dostawcy).
+- Logo i hasło akcji od zespołu → `AED_CAMPAIGN_*`.
+- Rozważyć poprawki w kodzie portalu zgłoszone jako znaleziska: kolejność providerów w `ServiceTestbed`, `require('leaflet')` w `LeafletService`, mutacja `TopLevelMeta._declared_fields`, CRLF w skryptach `.sh`.
