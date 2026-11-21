@@ -1,0 +1,66 @@
+.aed-list {
+  margin: 0;
+
+  &__item {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #c4c4c4;
+    border-radius: 0.25rem;
+    background: #fff;
+
+    &--selected {
+      border: 2px solid #0052a5;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: #0052a5;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  &__name {
+    flex: 1;
+  }
+
+  &__distance {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.25rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+
+    dt {
+      font-weight: 400;
+      color: #4a4a4a;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__details {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

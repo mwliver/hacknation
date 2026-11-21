@@ -53,6 +53,14 @@
         }}
       </li>
 
+      <!--AED v1 data standard (shown only when the backend has AED enabled)-->
+      <li *ngIf="resource?.attributes?.aed_validation">
+        <app-aed-standard-badge
+          [dataStandard]="resource.attributes.data_standard"
+          [validation]="resource.attributes.aed_validation"
+          [resourceId]="resource.id" />
+      </li>
+
       <!--protected dga data-->
       <li *ngIf="resource?.attributes?.contains_protected_data">
         <strong> {{ 'Attribute.ContainsProtectedData' | translate }}: </strong>

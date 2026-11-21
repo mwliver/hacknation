@@ -1,0 +1,127 @@
+<div class="container aed-share">
+  <app-aed-emergency-banner />
+  <h1 class="h2">{{ 'Aed.Share.Title' | translate }}</h1>
+  <p class="aed-share__lead">{{ 'Aed.Share.Lead' | translate }}</p>
+
+  <nav [attr.aria-label]="'Aed.Share.StepsLabel' | translate">
+    <ol class="aed-steps">
+      <li *ngFor="let s of steps" class="aed-steps__item" [ngClass]="{ 'aed-steps__item--current': step() === s, 'aed-steps__item--done': step() > s }">
+        <button
+          type="button"
+          class="aed-steps__button"
+          [attr.aria-current]="step() === s ? 'step' : null"
+          [disabled]="s === 3 && !report()"
+          [attr.data-test]="'aed-step-' + s"
+          (click)="goTo(s)">
+          <span class="aed-steps__number" aria-hidden="true">{{ s }}</span>
+          <span class="visually-hidden">{{ 'Aed.Share.Step' | translate: { n: s } }}: </span>
+          {{ 'Aed.Share.StepName.' + s | translate }}
+        </button>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- 1. template and field description -->
+  <section *ngIf="step() === 1" aria-labelledby="aed-step1-heading">
+    <h2 id="aed-step1-heading" #stepHeading data-step="1" tabindex="-1" class="h4">{{ 'Aed.Share.StepName.1' | translate }}</h2>
+    <p>{{ 'Aed.Share.Template.Text' | translate }}</p>
+    <div class="aed-share__downloads">
+      <a class="btn btn-primary" [href]="templateUrl('xlsx')" download data-test="aed-template-xlsx">{{ 'Aed.Share.Template.Xlsx' | translate }}</a>
+      <a class="btn btn-outline-primary" [href]="templateUrl('csv')" download data-test="aed-template-csv">{{ 'Aed.Share.Template.Csv' | translate }}</a>
+    </div>
+
+    <h3 class="h5 mt-4">{{ 'Aed.Share.Template.RulesHeading' | translate }}</h3>
+    <ul>
+      <li *ngFor="let rule of fileRules()">{{ text(rule) }}</li>
+    </ul>
+
+    <h3 class="h5 mt-4" id="aed-fields-heading">{{ 'Aed.Share.Template.FieldsHeading' | translate }}</h3>
+    <div class="table-responsive" tabindex="0" aria-labelledby="aed-fields-heading">
+      <table class="table table-sm aed-share__fields" data-test="aed-fields-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'Aed.Share.Template.Column' | translate }}</th>
+            <th scope="col">{{ 'Aed.Share.Template.Description' | translate }}</th>
+            <th scope="col">{{ 'Aed.Share.Template.Presence' | translate }}</th>
+            <th scope="col">{{ 'Aed.Share.Template.Example' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let field of fields()">
+            <th scope="row"><code>{{ field.name }}</code></th>
+            <td>
+              <strong>{{ text(field.title) }}</strong>. {{ text(field.description) }}
+              <span *ngIf="field.constraints?.enum" class="d-block small">
+                {{ 'Aed.Share.Template.Allowed' | translate }}: <code>{{ field.constraints.enum.join(', ') }}</code>
+              </span>
+            </td>
+            <td>{{ presenceKey(field) | translate }}</td>
+            <td><code>{{ field.example }}</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="aed-share__forbidden" *ngIf="schema()">
+      <strong>{{ 'Aed.Share.Template.Forbidden' | translate }}:</strong>
+      <code>{{ schema()['x-aed-forbidden-fields'].join(', ') }}</code>
+    </p>
+    <button type="button" class="btn btn-primary" (click)="goTo(2)">{{ 'Aed.Share.Next' | translate }}</button>
+  </section>
+
+  <!-- 2. upload and check -->
+  <section *ngIf="step() === 2" aria-labelledby="aed-step2-heading">
+    <h2 id="aed-step2-heading" #stepHeading data-step="2" tabindex="-1" class="h4">{{ 'Aed.Share.StepName.2' | translate }}</h2>
+    <p>{{ 'Aed.Share.Upload.Text' | translate }}</p>
+    <form (ngSubmit)="validate()" novalidate>
+      <label for="aed-file" class="form-label">{{ 'Aed.Share.Upload.Label' | translate }}</label>
+      <input
+        id="aed-file"
+        type="file"
+        class="form-control"
+        accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        aria-describedby="aed-file-hint aed-file-error"
+        [attr.aria-invalid]="!!fileError()"
+        data-test="aed-file"
+        (change)="onFileSelected($event)" />
+      <p id="aed-file-hint" class="form-text">{{ 'Aed.Share.Upload.Hint' | translate: { mb: maxSizeMb } }}</p>
+      <p id="aed-file-error" class="aed-share__error" role="alert" data-test="aed-file-error">{{ fileError() }}</p>
+      <div class="aed-share__buttons">
+        <button type="button" class="btn btn-outline-secondary" (click)="goTo(1)">{{ 'Aed.Share.Back' | translate }}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="validating()" data-test="aed-validate">
+          {{ (validating() ? 'Aed.Share.Upload.Checking' : 'Aed.Share.Upload.Check') | translate }}
+        </button>
+      </div>
+      <p class="visually-hidden" role="status" aria-live="polite">{{ validating() ? ('Aed.Share.Upload.Checking' | translate) : '' }}</p>
+    </form>
+  </section>
+
+  <!-- 3. report -->
+  <section *ngIf="step() === 3 && report()" aria-labelledby="aed-step3-heading">
+    <h2 id="aed-step3-heading" #stepHeading data-step="3" tabindex="-1" class="h4">{{ 'Aed.Share.StepName.3' | translate }}</h2>
+    <p *ngIf="reportForResource()">{{ 'Aed.Share.ReportForResource' | translate: { id: reportForResource() } }}</p>
+    <p *ngIf="!reportForResource() && file()">{{ 'Aed.Share.ReportForFile' | translate: { name: file()?.name } }}</p>
+    <app-aed-validation-report [report]="report()" [fileName]="file()?.name ?? ''" [headingLevel]="3" />
+    <p *ngIf="!report().zgodny" class="mt-3">{{ 'Aed.Share.FixAndRetry' | translate }}</p>
+    <div class="aed-share__buttons">
+      <button type="button" class="btn btn-outline-secondary" (click)="goTo(2)">{{ 'Aed.Share.CheckAnother' | translate }}</button>
+      <button type="button" class="btn btn-primary" [disabled]="!report().zgodny" (click)="goTo(4)" data-test="aed-to-publish">
+        {{ 'Aed.Share.Next' | translate }}
+      </button>
+    </div>
+  </section>
+
+  <!-- 4. publication -->
+  <section *ngIf="step() === 4" aria-labelledby="aed-step4-heading">
+    <h2 id="aed-step4-heading" #stepHeading data-step="4" tabindex="-1" class="h4">{{ 'Aed.Share.StepName.4' | translate }}</h2>
+    <ol class="aed-share__publish">
+      <li>{{ 'Aed.Share.Publish.Step1' | translate }}</li>
+      <li>{{ 'Aed.Share.Publish.Step2' | translate }}</li>
+      <li>{{ 'Aed.Share.Publish.Step3' | translate }}</li>
+      <li>{{ 'Aed.Share.Publish.Step4' | translate }}</li>
+      <li>{{ 'Aed.Share.Publish.Step5' | translate }}</li>
+    </ol>
+    <a class="btn btn-primary" [href]="adminPanelUrl" target="_blank" rel="noopener">
+      {{ 'Aed.Share.Publish.OpenPanel' | translate }}<span class="visually-hidden"> ({{ 'Aed.Share.NewWindow' | translate }})</span>
+    </a>
+  </section>
+</div>

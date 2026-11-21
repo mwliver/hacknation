@@ -17,6 +17,9 @@
   "RDFDocumentation": "RDF Documentation",
   "Hint": "Hint",
   "ROUTES.404": "404",
+  "ROUTES.aed": "aed",
+  "ROUTES.aedmap": "map",
+  "ROUTES.aedshare": "share",
   "Yes": "Yes",
   "About": {
     "Self": "About the portal"
@@ -69,6 +72,224 @@
     "EnterRegion": "Enter locations",
     "DownloadAll": "Download all",
     "Copied": "Copied"
+  },
+  "Aed": {
+    "Readiness": {
+      "Label": "Readiness",
+      "GOTOWY": "Ready",
+      "WYMAGA_UWAGI": "Needs attention",
+      "NIEZNANY": "Readiness unknown",
+      "NIEGOTOWY": "Not ready"
+    },
+    "Emergency": {
+      "Text": "In a sudden cardiac arrest, call 112 first.",
+      "Call": "Call 112"
+    },
+    "Badge": {
+      "Standard": "AED v1 standard",
+      "compliant": "compliant",
+      "errors": "{errors, plural, =1 {1 error} other {{errors} errors}}",
+      "pending": "validation in progress",
+      "ShowReport": "Validation report"
+    },
+    "Report": {
+      "Heading": "Validation report",
+      "Compliant": "The file complies with the AED v1 standard.",
+      "NotCompliant": "The file does not comply with the AED v1 standard – fix the errors.",
+      "Rows": "Data rows",
+      "Errors": "Errors",
+      "Warnings": "Warnings",
+      "Show": "Show",
+      "Level": {
+        "Self": "Level",
+        "ALL": "All",
+        "ERROR": "Error",
+        "WARNING": "Warning"
+      },
+      "ExportCsv": "Download report (CSV)",
+      "TableLabel": "List of problems in the file",
+      "Row": "Row",
+      "Column": "Column",
+      "Message": "Problem",
+      "NoIssuesForFilter": "No problems of this kind."
+    },
+    "List": {
+      "Empty": "No AEDs in this area.",
+      "NearestLabel": "Nearest AEDs",
+      "InViewLabel": "AEDs visible on the map",
+      "Distance": "Distance",
+      "Details": "Details",
+      "NearestHeading": "Nearest AEDs",
+      "From": "From",
+      "NoneNearbyShort": "No AEDs within 5 km. Zoom out the map or change the filters.",
+      "InViewHeading": "AEDs in the map view ({count})",
+      "ZoomIn": "There are too many AEDs in this area to list them. Zoom in or search for an address.",
+      "FoundNearest": "Found {count, plural, =1 {1 AED} other {{count} AEDs}} nearby.",
+      "NoneNearby": "No AEDs within {km} km."
+    },
+    "OpenNow": {
+      "Label": "Now",
+      "Open": "Open now",
+      "Closed": "Closed now",
+      "Unknown": "Hours unknown – see the description"
+    },
+    "Field": {
+      "Hours": "Availability hours",
+      "Access": "Access",
+      "Address": "Address",
+      "Location": "Exact location",
+      "Floor": "Floor",
+      "DeviceStatus": "Device status",
+      "Verification": "Data verification",
+      "LastInspection": "Last inspection",
+      "ElectrodesExpiry": "Electrodes expiry",
+      "BatteryExpiry": "Battery expiry",
+      "Updated": "Data updated"
+    },
+    "Access": {
+      "Public": "Available to everyone",
+      "StaffOnly": "Staff only",
+      "CodeFromDispatcher": "Locked cabinet – the 112 dispatcher will give you the code or key"
+    },
+    "Details": {
+      "Navigate": "Navigate",
+      "OpensMapApp": "opens a map application",
+      "ReportProblem": "Report a problem with this AED",
+      "Indoors": "indoors",
+      "Outdoors": "outdoors",
+      "NoData": "no data",
+      "Sources": "Data sources ({count})",
+      "PrimarySource": "deciding source",
+      "SourceDataset": "dataset"
+    },
+    "DeviceStatus": {
+      "SPRAWNY": "Operational",
+      "NIESPRAWNY": "Out of order",
+      "CZASOWO_NIEDOSTEPNY": "Temporarily unavailable",
+      "NIEZNANY": "Unknown"
+    },
+    "Verification": {
+      "ZWERYFIKOWANY": "Verified on site",
+      "NIEZWERYFIKOWANY": "Not verified",
+      "WATPLIWY": "Doubtful"
+    },
+    "Source": {
+      "WLASCICIEL": "device owner",
+      "JST": "local government",
+      "OSM": "OpenStreetMap",
+      "APLIKACJA": "application",
+      "INNE": "other source"
+    },
+    "Map": {
+      "Title": "Find the nearest AED",
+      "YouAreHere": "Your location",
+      "MapLabel": "Map of AED defibrillators",
+      "MapDescription": "Move the map with arrow keys and zoom with + and −. All AEDs from the map are also in the text list next to it (on a phone – below the map).",
+      "Legend": "Readiness colour legend"
+    },
+    "Geolocation": {
+      "Locating": "Finding your location…",
+      "MyLocation": "Your location",
+      "Denied": "Location access was not granted. Enter an address or a town below.",
+      "Unavailable": "Your location could not be determined. Enter an address or a town.",
+      "Timeout": "Finding your location took too long. Enter an address or a town.",
+      "Unsupported": "This browser does not provide location. Enter an address or a town."
+    },
+    "Search": {
+      "Heading": "Place search",
+      "MyLocation": "My location",
+      "AddressLabel": "Address or town",
+      "AddressHint": "E.g. Otwock, Kolejowa 1",
+      "Submit": "Search",
+      "TooShort": "Enter at least 3 characters.",
+      "Searching": "Searching for the address…",
+      "NotFound": "Address not found. Check the spelling or enter just the town.",
+      "Error": "Address search is temporarily unavailable. Use \"My location\" or move the map."
+    },
+    "Filters": {
+      "Legend": "Filters",
+      "OpenNow": "Open now only",
+      "PublicAccess": "Public access only",
+      "Readiness": "Readiness",
+      "Any": "any"
+    },
+    "Campaign": {
+      "Title": "AED Mission",
+      "Breadcrumb": "AED Mission",
+      "LogoAlt": "{name} campaign logo",
+      "Lead": "We are building an open, nationwide dataset of AED defibrillators – from many data holders, in one model format.",
+      "FindNearest": "Find the nearest AED",
+      "ShareData": "Share AED data",
+      "StatsHeading": "The national dataset in numbers",
+      "StatAeds": "Defibrillators in the national dataset",
+      "StatProviders": "Data holders",
+      "StatElectrodes": "Records with electrodes expiry date",
+      "WhyHeading": "Why?",
+      "WhyText": "In a cardiac arrest minutes matter. Every minute without defibrillation lowers the chance of survival. The 112 dispatcher and bystanders must quickly know where the nearest AED is, whether it is accessible and whether it works.",
+      "HowHeading": "How to share data?",
+      "HowStep1": "Download the template and fill in data about your AEDs.",
+      "HowStep2": "Check the file in the wizard – you will get a list of errors to fix.",
+      "HowStep3": "Publish the resource on dane.gov.pl and mark it as \"AED v1 standard\".",
+      "WhoHeading": "Who already shares?",
+      "WhoText": "Data is shared by {providers, plural, =1 {1 data holder} other {{providers} data holders}} in {sources, plural, =1 {1 resource} other {{sources} resources}}.",
+      "BrowseDatasets": "Browse AED datasets"
+    },
+    "Share": {
+      "Title": "Share AED data",
+      "Lead": "The wizard helps you prepare a file compliant with the AED v1 model data scope and check it before publishing on dane.gov.pl. Checking a file does not publish anything.",
+      "StepsLabel": "Wizard steps",
+      "Step": "Step {n}",
+      "StepName": {
+        "1": "Download the template",
+        "2": "Upload and check the file",
+        "3": "Report",
+        "4": "Publish"
+      },
+      "Template": {
+        "Text": "The template contains all columns of the AED v1 standard. One row is one defibrillator. The field description below is generated from the standard's schema.",
+        "Xlsx": "Download XLSX template",
+        "Csv": "Download CSV template",
+        "RulesHeading": "File rules",
+        "FieldsHeading": "Fields",
+        "Column": "Column",
+        "Description": "Description",
+        "Presence": "Filling",
+        "Example": "Example",
+        "Allowed": "Allowed values",
+        "Forbidden": "Forbidden columns (the file will be rejected)"
+      },
+      "Presence": {
+        "required": "required",
+        "if_known": "if known",
+        "extended": "optional column"
+      },
+      "Next": "Next",
+      "Back": "Back",
+      "Upload": {
+        "Text": "Choose a CSV file (UTF-8, comma separated) or an XLSX file (first sheet, no macros).",
+        "Label": "File with AED data",
+        "Hint": "Allowed types: CSV, XLSX. Maximum size: {mb} MB.",
+        "Check": "Check the file",
+        "Checking": "Checking the file…",
+        "NoFile": "Choose a file to check.",
+        "WrongType": "Unsupported file type. Choose a CSV or XLSX file.",
+        "TooLarge": "The file is too large (maximum {mb} MB).",
+        "ServerError": "The file could not be checked. Please try again in a moment."
+      },
+      "ReportForResource": "Validation report of resource no. {id} published on the portal.",
+      "ReportForFile": "Report for the file {name}.",
+      "FixAndRetry": "Fix the indicated rows and columns in the file and check it again.",
+      "CheckAnother": "Check another or corrected file",
+      "Publish": {
+        "Step1": "Log in to the dane.gov.pl data provider panel.",
+        "Step2": "Add a dataset (e.g. \"AED defibrillators – institution name\") or choose an existing one.",
+        "Step3": "Add a resource: upload the checked CSV or XLSX file.",
+        "Step4": "In the \"Data standard\" field choose \"AED v1 standard\" and save the resource.",
+        "Step5": "The portal checks the file automatically. Compliant resources are added to the national AED dataset at the next update (daily).",
+        "OpenPanel": "Go to the data provider panel"
+      },
+      "NewWindow": "opens in a new window"
+    }
   },
   "ActivityNotification": {
     "object_restored": "Restored",

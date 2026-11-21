@@ -1,0 +1,107 @@
+<div class="container aed-map-page">
+  <app-aed-emergency-banner />
+  <h1 class="h2">{{ 'Aed.Map.Title' | translate }}</h1>
+
+  <!-- status messages for screen readers (location, search, results) -->
+  <p class="visually-hidden" role="status" aria-live="polite" data-test="aed-status">{{ statusMessage() }}</p>
+
+  <section class="aed-search" aria-labelledby="aed-search-heading">
+    <h2 id="aed-search-heading" class="visually-hidden">{{ 'Aed.Search.Heading' | translate }}</h2>
+    <button type="button" class="btn btn-primary aed-search__locate" data-test="aed-locate" (click)="useMyLocation()">
+      <svg class="icon" aria-hidden="true"><use href="/assets/icomoon/sprite/sprite.svg#icon-location-pin"></use></svg>
+      {{ 'Aed.Search.MyLocation' | translate }}
+    </button>
+    <form class="aed-search__form" role="search" (ngSubmit)="searchAddress()" novalidate>
+      <label for="aed-address" class="form-label">{{ 'Aed.Search.AddressLabel' | translate }}</label>
+      <div class="aed-search__row">
+        <input
+          #addressInput
+          id="aed-address"
+          name="address"
+          type="search"
+          class="form-control"
+          autocomplete="street-address"
+          [(ngModel)]="address"
+          [attr.aria-invalid]="!!addressError()"
+          aria-describedby="aed-address-hint aed-address-error"
+          data-test="aed-address" />
+        <button type="submit" class="btn btn-outline-primary" data-test="aed-address-submit">
+          {{ 'Aed.Search.Submit' | translate }}
+        </button>
+      </div>
+      <p id="aed-address-hint" class="form-text">{{ 'Aed.Search.AddressHint' | translate }}</p>
+      <p id="aed-address-error" class="aed-search__error" role="alert" data-test="aed-address-error">{{ addressError() }}</p>
+    </form>
+  </section>
+
+  <form class="aed-filters" aria-labelledby="aed-filters-legend" (ngSubmit)="onFiltersChange()">
+    <fieldset>
+      <legend id="aed-filters-legend" class="h6">
+        {{ 'Aed.Filters.Legend' | translate }}
+        <span *ngIf="activeFilters()" class="badge bg-primary">{{ activeFilters() }}</span>
+      </legend>
+      <div class="aed-filters__row">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="aed-filter-open" name="openNow" [(ngModel)]="filters.openNow" (change)="onFiltersChange()" />
+          <label class="form-check-label" for="aed-filter-open">{{ 'Aed.Filters.OpenNow' | translate }}</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="aed-filter-public" name="publicAccess" [(ngModel)]="filters.publicAccess" (change)="onFiltersChange()" />
+          <label class="form-check-label" for="aed-filter-public">{{ 'Aed.Filters.PublicAccess' | translate }}</label>
+        </div>
+        <div class="aed-filters__select">
+          <label for="aed-filter-readiness" class="form-label mb-0">{{ 'Aed.Filters.Readiness' | translate }}</label>
+          <select id="aed-filter-readiness" name="readiness" class="form-select" [(ngModel)]="filters.readiness" (change)="onFiltersChange()">
+            <option [ngValue]="null">{{ 'Aed.Filters.Any' | translate }}</option>
+            <option *ngFor="let value of readinessValues" [ngValue]="value">{{ 'Aed.Readiness.' + value | translate }}</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+  <div class="row aed-map-page__layout">
+    <div class="col-lg-7">
+      <div
+        #mapRef
+        class="aed-map"
+        role="region"
+        tabindex="0"
+        [attr.aria-label]="'Aed.Map.MapLabel' | translate"
+        aria-describedby="aed-map-desc"
+        data-test="aed-map"></div>
+      <p id="aed-map-desc" class="form-text">{{ 'Aed.Map.MapDescription' | translate }}</p>
+      <ul class="aed-legend list-unstyled" [attr.aria-label]="'Aed.Map.Legend' | translate">
+        <li *ngFor="let value of readinessValues">
+          <span class="aed-legend__dot aed-legend__dot--{{ value }}" aria-hidden="true"></span>{{ 'Aed.Readiness.' + value | translate }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-lg-5">
+      <app-aed-details *ngIf="selected() as record" [record]="record" (closed)="closeDetails()" />
+
+      <section *ngIf="location()" aria-labelledby="aed-nearest-heading" class="mt-3 mt-lg-0">
+        <h2 id="aed-nearest-heading" class="h5">{{ 'Aed.List.NearestHeading' | translate }}</h2>
+        <p class="small text-muted">{{ 'Aed.List.From' | translate }}: {{ location()?.label }}</p>
+        <p *ngIf="loading()">{{ 'Loading' | translate }}</p>
+        <app-aed-nearest-list
+          [records]="nearest()"
+          [selectedId]="selected()?.id_aed_krajowe ?? null"
+          emptyMessageKey="Aed.List.NoneNearbyShort"
+          (selected)="select($event)" />
+      </section>
+
+      <section aria-labelledby="aed-inview-heading" class="mt-3">
+        <h2 id="aed-inview-heading" class="h5">{{ 'Aed.List.InViewHeading' | translate: { count: inViewCount() } }}</h2>
+        <p *ngIf="inViewCount() > inView().length" class="small" data-test="aed-zoom-in">{{ 'Aed.List.ZoomIn' | translate }}</p>
+        <app-aed-nearest-list
+          [records]="inView()"
+          [selectedId]="selected()?.id_aed_krajowe ?? null"
+          listLabelKey="Aed.List.InViewLabel"
+          [emptyMessageKey]="inViewCount() ? 'Aed.List.ZoomIn' : 'Aed.List.Empty'"
+          (selected)="select($event)" />
+      </section>
+    </div>
+  </div>
+</div>

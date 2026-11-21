@@ -1,0 +1,73 @@
+<article class="aed-details" aria-labelledby="aed-details-heading" data-test="aed-details">
+  <div class="aed-details__top">
+    <h2 id="aed-details-heading" #heading tabindex="-1" class="h4 mb-1">{{ record().nazwa_obiektu }}</h2>
+    <button type="button" class="btn btn-link aed-details__close" (click)="close()" data-test="aed-details-close">
+      {{ 'Action.Close' | translate }}<span class="visually-hidden"> – {{ record().nazwa_obiektu }}</span>
+    </button>
+  </div>
+  <p class="mb-2">
+    <app-aed-readiness-badge [readiness]="record().gotowosc" />
+    <span *ngIf="record().odleglosc_m !== null" class="ms-2 fw-bold">{{ distance() }}</span>
+  </p>
+
+  <div class="aed-details__actions">
+    <a class="btn btn-primary" [href]="navigateUrl()" target="_blank" rel="noopener" data-test="aed-navigate">
+      {{ 'Aed.Details.Navigate' | translate }}<span class="visually-hidden"> ({{ 'Aed.Details.OpensMapApp' | translate }})</span>
+    </a>
+    <a
+      *ngIf="reportUrl()"
+      class="btn btn-outline-danger"
+      [routerLink]="['/!dataset', '!feedback'] | localize"
+      [queryParams]="{ datasetUrl: reportUrl() }"
+      data-test="aed-report-problem">
+      {{ 'Aed.Details.ReportProblem' | translate }}
+    </a>
+  </div>
+
+  <dl class="aed-details__list">
+    <dt>{{ 'Aed.Field.Address' | translate }}</dt>
+    <dd>{{ address() }}</dd>
+    <dt>{{ 'Aed.Field.Location' | translate }}</dt>
+    <dd>
+      {{ record().opis_lokalizacji }}
+      <span *ngIf="record().pietro !== null && record().pietro !== undefined">
+        · {{ 'Aed.Field.Floor' | translate }}: {{ record().pietro }}
+      </span>
+      · {{ (record().wewnatrz_budynku ? 'Aed.Details.Indoors' : 'Aed.Details.Outdoors') | translate }}
+    </dd>
+    <dt>{{ 'Aed.Field.Hours' | translate }}</dt>
+    <dd>
+      <code>{{ record().godziny_dostepnosci }}</code> –
+      {{ (record().otwarte_teraz === true ? 'Aed.OpenNow.Open' : record().otwarte_teraz === false ? 'Aed.OpenNow.Closed' : 'Aed.OpenNow.Unknown') | translate }}
+    </dd>
+    <dt>{{ 'Aed.Field.Access' | translate }}</dt>
+    <dd>
+      {{ (record().dostep_publiczny ? 'Aed.Access.Public' : 'Aed.Access.StaffOnly') | translate }}
+      <span *ngIf="record().wymaga_kodu_lub_klucza"> · {{ 'Aed.Access.CodeFromDispatcher' | translate }}</span>
+    </dd>
+    <dt>{{ 'Aed.Field.DeviceStatus' | translate }}</dt>
+    <dd>{{ 'Aed.DeviceStatus.' + record().status_urzadzenia | translate }}</dd>
+    <dt>{{ 'Aed.Field.Verification' | translate }}</dt>
+    <dd>{{ 'Aed.Verification.' + record().status_weryfikacji | translate }}</dd>
+    <dt>{{ 'Aed.Field.LastInspection' | translate }}</dt>
+    <dd>{{ record().data_ostatniej_kontroli || ('Aed.Details.NoData' | translate) }}</dd>
+    <dt>{{ 'Aed.Field.ElectrodesExpiry' | translate }}</dt>
+    <dd>{{ record().data_waznosci_elektrod || ('Aed.Details.NoData' | translate) }}</dd>
+    <dt>{{ 'Aed.Field.BatteryExpiry' | translate }}</dt>
+    <dd>{{ record().data_waznosci_baterii || ('Aed.Details.NoData' | translate) }}</dd>
+    <dt>{{ 'Aed.Field.Updated' | translate }}</dt>
+    <dd>{{ record().data_aktualizacji }}</dd>
+  </dl>
+
+  <h3 class="h6">{{ 'Aed.Details.Sources' | translate: { count: record().liczba_zrodel } }}</h3>
+  <ul class="aed-details__sources">
+    <li *ngFor="let source of record().zrodla">
+      <strong>{{ source.dysponent }}</strong>
+      ({{ 'Aed.Source.' + source.zrodlo_danych | translate }}<span *ngIf="source.zrodlo_id">, {{ source.zrodlo_id }}</span>)
+      <span *ngIf="source.zrodlo_wygrywajace" class="badge bg-secondary ms-1">{{ 'Aed.Details.PrimarySource' | translate }}</span>
+      <a *ngIf="source.zbior_id" class="ms-1" [routerLink]="['/!dataset', source.zbior_id] | localize">
+        {{ 'Aed.Details.SourceDataset' | translate }}
+      </a>
+    </li>
+  </ul>
+</article>

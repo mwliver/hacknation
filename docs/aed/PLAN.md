@@ -182,7 +182,7 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 - [x] Faza 1 – schemat v1, loader, generatory CSV/XLSX, `export_aed_standard` (2026-11-21)
 - [x] Faza 2 – flaga AED na zasobie, walidator, raport w adminie i API, `POST /aed/validate` (2026-11-21)
 - [x] Faza 3 – agregacja, deduplikacja, indeks `aed`, API `/aed`, `nearest`, `{id}`, `stats` (2026-11-21)
-- [ ] Faza 4
+- [x] Faza 4 – frontend: strona akcji, mapa, kreator dysponenta, odznaki (2026-11-21; weryfikacja 1440/360 px i klawiatury Playwrightem w fazie 5)
 - [ ] Faza 5
 
 ### Znane problemy / ryzyka
@@ -243,3 +243,15 @@ AED_ENABLED=True python manage.py migrate
 AED_ENABLED=True python manage.py search_index --create --models aed.AedRecord
 AED_ENABLED=True python manage.py aed_demo_data          # wypisze AED_NATIONAL_ORGANIZATION_ID
 ```
+
+### Faza 4 – co zrobiono (2026-11-21)
+- `frontend_latest/src/app/pages/aed/` (standalone, lazy `AED_ROUTES`, `canMatch: aedEnabledGuard` → `GET /aed/config`; przy `AED_ENABLED=False` 404):
+  - `/aed` – strona akcji (`AED_CAMPAIGN_NAME/SLOGAN/LOGO_URL` z `/aed/config`, liczniki z `/aed/stats`, 3 bloki, 2 przyciski),
+  - `/aed/mapa` (`/en/aed/map`) – Leaflet + kafelki OSM z atrybucją (istniejący `LeafletService`), klastry z API (`geohash_grid`), „Moja lokalizacja” (Geolocation API z obsługą odmowy/timeoutu/braku), wyszukiwanie adresu (istniejący `NominatimGeocodeService`), filtry (otwarte teraz, dostęp publiczny, gotowość), lista 5 najbliższych + lista „AED w widoku mapy” (tekstowy odpowiednik mapy), szczegóły (adres, opis, godziny, statusy, daty, źródła, „Nawiguj” – `geo:`/Apple Maps/OSM, „Zgłoś problem” – istniejący formularz uwag do zasobu źródłowego dysponenta), stały baner „najpierw dzwoń 112” z `tel:112`,
+  - `/aed/udostepnij` (`/en/aed/share`) – kreator 4 kroków (szablon + opis pól ze `/aed/schema`, wgranie i sprawdzenie `POST /aed/validate`, raport z filtrem i eksportem CSV, instrukcja publikacji); `?raport=<id zasobu>` pokazuje raport opublikowanego zasobu.
+- Odznaka „Standard AED v1” ze statusem i linkiem do raportu na stronie zasobu i na liście zasobów zbioru (`app-aed-standard-badge`, renderowana tylko gdy API zwraca `aed_validation`).
+- i18n: sekcja `Aed` i klucze `ROUTES.aed`, `ROUTES.aedmap`, `ROUTES.aedshare` w `pl.json`/`en.json`, wstawiane tekstowo skryptem `node docs/aed/scripts/merge-i18n.js` ze źródła `docs/aed/scripts/aed-i18n.json` (reszta plików bez zmian). Uwaga: `!map` jest już zajęte przez mapę zasobu, stąd unikalne `!aedmap`/`!aedshare`.
+- Dostępność: gotowość = tekst + ikona + kolor (kontrast ≥ 4.5:1), komunikaty `role="status"`/`role="alert"`, pola z `aria-describedby`, fokus na nagłówku kroku/szczegółów, cele ≥ 44×44 px, mobile-first (lista pod mapą < 992 px), `table-responsive` z `tabindex=0`.
+- Testy Jest: AED 25, cały frontend 948/948 (140 zestawów), `ng build` OK, ESLint AED OK. Zakres: serwis API (mock HTTP), filtry/eksport CSV/nawigacja, raport walidacji, lista najbliższych, geolokalizacja (odmowa, brak API, timeout).
+- Znalezisko: `ServiceTestbed` ustawia `provideHttpClientTesting()` przed `provideHttpClient()`, więc istniejące testy serwisów używają prawdziwego backendu HTTP i nie weryfikują żądań. Nie zmieniałem go (cudze testy); spec AED ma poprawną kolejność.
+- Do weryfikacji w fazie 5: 1440 px / 360 px i przejście klawiaturą – Playwright z zamockowanym API (działający stack nie serwuje kodu AED).
