@@ -1,11 +1,17 @@
 {
   "pl": {
-    "ROUTES.aed": "aed",
-    "ROUTES.aedmap": "mapa",
-    "ROUTES.aedshare": "udostepnij",
     "Aed": {
-      "Readiness": { "Label": "Gotowość", "GOTOWY": "Gotowy", "WYMAGA_UWAGI": "Wymaga uwagi", "NIEZNANY": "Gotowość nieznana", "NIEGOTOWY": "Niegotowy" },
-      "Emergency": { "Text": "W nagłym zatrzymaniu krążenia najpierw dzwoń 112.", "Call": "Zadzwoń 112" },
+      "Readiness": {
+        "Label": "Gotowość",
+        "GOTOWY": "Gotowy",
+        "WYMAGA_UWAGI": "Wymaga uwagi",
+        "NIEZNANY": "Gotowość nieznana",
+        "NIEGOTOWY": "Niegotowy"
+      },
+      "Emergency": {
+        "Text": "W nagłym zatrzymaniu krążenia najpierw dzwoń 112.",
+        "Call": "Zadzwoń 112"
+      },
       "Badge": {
         "Standard": "Standard AED v1",
         "compliant": "zgodny ze standardem",
@@ -21,7 +27,12 @@
         "Errors": "Błędy",
         "Warnings": "Ostrzeżenia",
         "Show": "Pokaż",
-        "Level": { "Self": "Poziom", "ALL": "Wszystkie", "ERROR": "Błąd", "WARNING": "Ostrzeżenie" },
+        "Level": {
+          "Self": "Poziom",
+          "ALL": "Wszystkie",
+          "ERROR": "Błąd",
+          "WARNING": "Ostrzeżenie"
+        },
         "ExportCsv": "Pobierz raport (CSV)",
         "TableLabel": "Lista problemów w pliku",
         "Row": "Wiersz",
@@ -43,7 +54,12 @@
         "FoundNearest": "Znaleziono {count, plural, =1 {1 AED} few {{count} AED} other {{count} AED}} w pobliżu.",
         "NoneNearby": "Brak AED w promieniu {km} km."
       },
-      "OpenNow": { "Label": "Teraz", "Open": "Otwarte teraz", "Closed": "Teraz zamknięte", "Unknown": "Godziny nieznane – sprawdź opis" },
+      "OpenNow": {
+        "Label": "Teraz",
+        "Open": "Otwarte teraz",
+        "Closed": "Teraz zamknięte",
+        "Unknown": "Godziny nieznane – sprawdź opis"
+      },
       "Field": {
         "Hours": "Godziny dostępności",
         "Access": "Dostęp",
@@ -73,9 +89,24 @@
         "PrimarySource": "źródło rozstrzygające",
         "SourceDataset": "zbiór danych"
       },
-      "DeviceStatus": { "SPRAWNY": "Sprawny", "NIESPRAWNY": "Niesprawny", "CZASOWO_NIEDOSTEPNY": "Czasowo niedostępny", "NIEZNANY": "Nieznany" },
-      "Verification": { "ZWERYFIKOWANY": "Zweryfikowane na miejscu", "NIEZWERYFIKOWANY": "Niezweryfikowane", "WATPLIWY": "Wątpliwe" },
-      "Source": { "WLASCICIEL": "właściciel urządzenia", "JST": "samorząd", "OSM": "OpenStreetMap", "APLIKACJA": "aplikacja", "INNE": "inne źródło" },
+      "DeviceStatus": {
+        "SPRAWNY": "Sprawny",
+        "NIESPRAWNY": "Niesprawny",
+        "CZASOWO_NIEDOSTEPNY": "Czasowo niedostępny",
+        "NIEZNANY": "Nieznany"
+      },
+      "Verification": {
+        "ZWERYFIKOWANY": "Zweryfikowane na miejscu",
+        "NIEZWERYFIKOWANY": "Niezweryfikowane",
+        "WATPLIWY": "Wątpliwe"
+      },
+      "Source": {
+        "WLASCICIEL": "właściciel urządzenia",
+        "JST": "samorząd",
+        "OSM": "OpenStreetMap",
+        "APLIKACJA": "aplikacja",
+        "INNE": "inne źródło"
+      },
       "Map": {
         "Title": "Znajdź najbliższy AED",
         "YouAreHere": "Twoja lokalizacja",
@@ -102,7 +133,13 @@
         "NotFound": "Nie znaleziono takiego adresu. Sprawdź pisownię lub wpisz samą miejscowość.",
         "Error": "Wyszukiwarka adresów jest chwilowo niedostępna. Użyj przycisku „Moja lokalizacja” lub przesuń mapę."
       },
-      "Filters": { "Legend": "Filtry", "OpenNow": "Tylko otwarte teraz", "PublicAccess": "Tylko dostęp publiczny", "Readiness": "Gotowość", "Any": "dowolna" },
+      "Filters": {
+        "Legend": "Filtry",
+        "OpenNow": "Tylko otwarte teraz",
+        "PublicAccess": "Tylko dostęp publiczny",
+        "Readiness": "Gotowość",
+        "Any": "dowolna"
+      },
       "Campaign": {
         "Title": "Misja AED",
         "Breadcrumb": "Misja AED",
@@ -129,7 +166,12 @@
         "Lead": "Kreator pomoże Ci przygotować plik zgodny ze wzorcowym zakresem danych AED v1 i sprawdzić go przed publikacją w dane.gov.pl. Sprawdzenie pliku niczego nie publikuje.",
         "StepsLabel": "Kroki kreatora",
         "Step": "Krok {n}",
-        "StepName": { "1": "Pobierz szablon", "2": "Wgraj i sprawdź plik", "3": "Raport", "4": "Opublikuj" },
+        "StepName": {
+          "1": "Pobierz szablon",
+          "2": "Wgraj i sprawdź plik",
+          "3": "Raport",
+          "4": "Opublikuj"
+        },
         "Template": {
           "Text": "Szablon zawiera wszystkie kolumny standardu AED v1. Jeden wiersz to jeden defibrylator. Opis pól poniżej jest generowany ze schematu standardu.",
           "Xlsx": "Pobierz szablon XLSX",
@@ -143,7 +185,11 @@
           "Allowed": "Dozwolone wartości",
           "Forbidden": "Kolumny zakazane (plik zostanie odrzucony)"
         },
-        "Presence": { "required": "wymagane", "if_known": "jeśli znane", "extended": "opcjonalna kolumna" },
+        "Presence": {
+          "required": "wymagane",
+          "if_known": "jeśli znane",
+          "extended": "opcjonalna kolumna"
+        },
         "Next": "Dalej",
         "Back": "Wstecz",
         "Upload": {
@@ -174,12 +220,18 @@
     }
   },
   "en": {
-    "ROUTES.aed": "aed",
-    "ROUTES.aedmap": "map",
-    "ROUTES.aedshare": "share",
     "Aed": {
-      "Readiness": { "Label": "Readiness", "GOTOWY": "Ready", "WYMAGA_UWAGI": "Needs attention", "NIEZNANY": "Readiness unknown", "NIEGOTOWY": "Not ready" },
-      "Emergency": { "Text": "In a sudden cardiac arrest, call 112 first.", "Call": "Call 112" },
+      "Readiness": {
+        "Label": "Readiness",
+        "GOTOWY": "Ready",
+        "WYMAGA_UWAGI": "Needs attention",
+        "NIEZNANY": "Readiness unknown",
+        "NIEGOTOWY": "Not ready"
+      },
+      "Emergency": {
+        "Text": "In a sudden cardiac arrest, call 112 first.",
+        "Call": "Call 112"
+      },
       "Badge": {
         "Standard": "AED v1 standard",
         "compliant": "compliant",
@@ -195,7 +247,12 @@
         "Errors": "Errors",
         "Warnings": "Warnings",
         "Show": "Show",
-        "Level": { "Self": "Level", "ALL": "All", "ERROR": "Error", "WARNING": "Warning" },
+        "Level": {
+          "Self": "Level",
+          "ALL": "All",
+          "ERROR": "Error",
+          "WARNING": "Warning"
+        },
         "ExportCsv": "Download report (CSV)",
         "TableLabel": "List of problems in the file",
         "Row": "Row",
@@ -217,7 +274,12 @@
         "FoundNearest": "Found {count, plural, =1 {1 AED} other {{count} AEDs}} nearby.",
         "NoneNearby": "No AEDs within {km} km."
       },
-      "OpenNow": { "Label": "Now", "Open": "Open now", "Closed": "Closed now", "Unknown": "Hours unknown – see the description" },
+      "OpenNow": {
+        "Label": "Now",
+        "Open": "Open now",
+        "Closed": "Closed now",
+        "Unknown": "Hours unknown – see the description"
+      },
       "Field": {
         "Hours": "Availability hours",
         "Access": "Access",
@@ -247,9 +309,24 @@
         "PrimarySource": "deciding source",
         "SourceDataset": "dataset"
       },
-      "DeviceStatus": { "SPRAWNY": "Operational", "NIESPRAWNY": "Out of order", "CZASOWO_NIEDOSTEPNY": "Temporarily unavailable", "NIEZNANY": "Unknown" },
-      "Verification": { "ZWERYFIKOWANY": "Verified on site", "NIEZWERYFIKOWANY": "Not verified", "WATPLIWY": "Doubtful" },
-      "Source": { "WLASCICIEL": "device owner", "JST": "local government", "OSM": "OpenStreetMap", "APLIKACJA": "application", "INNE": "other source" },
+      "DeviceStatus": {
+        "SPRAWNY": "Operational",
+        "NIESPRAWNY": "Out of order",
+        "CZASOWO_NIEDOSTEPNY": "Temporarily unavailable",
+        "NIEZNANY": "Unknown"
+      },
+      "Verification": {
+        "ZWERYFIKOWANY": "Verified on site",
+        "NIEZWERYFIKOWANY": "Not verified",
+        "WATPLIWY": "Doubtful"
+      },
+      "Source": {
+        "WLASCICIEL": "device owner",
+        "JST": "local government",
+        "OSM": "OpenStreetMap",
+        "APLIKACJA": "application",
+        "INNE": "other source"
+      },
       "Map": {
         "Title": "Find the nearest AED",
         "YouAreHere": "Your location",
@@ -276,7 +353,13 @@
         "NotFound": "Address not found. Check the spelling or enter just the town.",
         "Error": "Address search is temporarily unavailable. Use \"My location\" or move the map."
       },
-      "Filters": { "Legend": "Filters", "OpenNow": "Open now only", "PublicAccess": "Public access only", "Readiness": "Readiness", "Any": "any" },
+      "Filters": {
+        "Legend": "Filters",
+        "OpenNow": "Open now only",
+        "PublicAccess": "Public access only",
+        "Readiness": "Readiness",
+        "Any": "any"
+      },
       "Campaign": {
         "Title": "AED Mission",
         "Breadcrumb": "AED Mission",
@@ -303,7 +386,12 @@
         "Lead": "The wizard helps you prepare a file compliant with the AED v1 model data scope and check it before publishing on dane.gov.pl. Checking a file does not publish anything.",
         "StepsLabel": "Wizard steps",
         "Step": "Step {n}",
-        "StepName": { "1": "Download the template", "2": "Upload and check the file", "3": "Report", "4": "Publish" },
+        "StepName": {
+          "1": "Download the template",
+          "2": "Upload and check the file",
+          "3": "Report",
+          "4": "Publish"
+        },
         "Template": {
           "Text": "The template contains all columns of the AED v1 standard. One row is one defibrillator. The field description below is generated from the standard's schema.",
           "Xlsx": "Download XLSX template",
@@ -317,7 +405,11 @@
           "Allowed": "Allowed values",
           "Forbidden": "Forbidden columns (the file will be rejected)"
         },
-        "Presence": { "required": "required", "if_known": "if known", "extended": "optional column" },
+        "Presence": {
+          "required": "required",
+          "if_known": "if known",
+          "extended": "optional column"
+        },
         "Next": "Next",
         "Back": "Back",
         "Upload": {

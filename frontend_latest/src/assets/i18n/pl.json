@@ -17,9 +17,6 @@
   "RDFDocumentation": "Dokumentacja RDF",
   "Hint": "Podpowiedź",
   "ROUTES.404": "404",
-  "ROUTES.aed": "aed",
-  "ROUTES.aedmap": "mapa",
-  "ROUTES.aedshare": "udostepnij",
   "Yes": "Tak",
   "About": {
     "Self": "O serwisie"

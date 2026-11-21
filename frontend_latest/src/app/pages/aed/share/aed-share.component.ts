@@ -11,6 +11,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
@@ -29,7 +30,15 @@ export const AED_ADMIN_PANEL_URL = 'https://admin.dane.gov.pl';
 @Component({
   selector: 'app-aed-share',
   standalone: true,
-  imports: [NgIf, NgFor, NgClass, TranslatePipe, AedEmergencyBannerComponent, AedValidationReportComponent],
+  imports: [
+    NgIf,
+    NgFor,
+    NgClass,
+    FormsModule,
+    TranslatePipe,
+    AedEmergencyBannerComponent,
+    AedValidationReportComponent,
+  ],
   templateUrl: './aed-share.component.html',
   styleUrl: './aed-share.component.scss',
 })

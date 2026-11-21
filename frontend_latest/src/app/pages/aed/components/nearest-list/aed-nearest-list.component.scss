@@ -59,6 +59,11 @@
     }
   }
 
+  &__hours {
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+
   &__details {
     min-height: 44px;
     min-width: 44px;

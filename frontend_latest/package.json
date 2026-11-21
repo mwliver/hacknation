@@ -15,6 +15,7 @@
     "format:lint": "npm run format && npm run lint:fix",
     "test": "jest --maxWorkers=4",
     "test:watch": "jest --watch",
+    "e2e:aed": "playwright test e2e/aed",
     "coverage": "ng test --watch=false --coverage",
     "madge:circular": "madge --circular --extensions ts src/ --ts-config tsconfig.json",
     "madge:summary": "madge --summary --extensions ts src/ --ts-config tsconfig.json"
@@ -98,6 +99,7 @@
     "@angular/compiler-cli": "^18.2.13",
     "@angular/language-service": "^18.2.13",
     "@compodoc/compodoc": "^1.1.26",
+    "@playwright/test": "^1.65.1",
     "@types/ace": "^0.0.52",
     "@types/express": "^5.0.0",
     "@types/helmet": "4.0.0",

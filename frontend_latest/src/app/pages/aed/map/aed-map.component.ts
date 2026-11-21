@@ -14,7 +14,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { LayerGroup, Map } from 'leaflet';
+import type { LayerGroup, Map } from 'leaflet';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
@@ -32,7 +32,6 @@ import {
   AedRecord,
 } from '@app/pages/aed/services/aed.models';
 import { AedBounds, AedService } from '@app/pages/aed/services/aed.service';
-import { LeafletService } from '@app/services/leflet.service';
 import { NominatimGeocodeService } from '@app/services/nominatim-geocode.service';
 import { SeoService } from '@app/services/seo.service';
 
@@ -68,7 +67,6 @@ export class AedMapComponent implements OnInit, AfterViewInit {
   private readonly aedService = inject(AedService);
   private readonly geolocation = inject(AedGeolocationService);
   private readonly geocoder = inject(NominatimGeocodeService);
-  private readonly leaflet = inject(LeafletService);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
   private readonly zone = inject(NgZone);
@@ -91,6 +89,7 @@ export class AedMapComponent implements OnInit, AfterViewInit {
   readonly statusMessage = signal('');
   readonly addressError = signal('');
 
+  private L: typeof import('leaflet');
   private map: Map;
   private markersLayer: LayerGroup;
   private userLayer: LayerGroup;
@@ -104,20 +103,29 @@ export class AedMapComponent implements OnInit, AfterViewInit {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    this.map = this.leaflet.createMap(this.mapRef, {
-      center: POLAND_CENTER,
-      zoom: POLAND_ZOOM,
-      keyboard: true,
-      minZoom: 5,
+    // Leaflet is loaded lazily in the browser only (SSR safe). The shared LeafletService uses require(),
+    // which the esbuild/Vite dev server does not support.
+    import('leaflet').then((module) => {
+      this.L = (module as unknown as { default?: typeof import('leaflet') }).default ?? module;
+      this.initMap();
     });
-    this.leaflet
-      .tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-      })
-      .addTo(this.map);
-    this.markersLayer = this.leaflet.layerGroup().addTo(this.map);
-    this.userLayer = this.leaflet.layerGroup().addTo(this.map);
+  }
+
+  private initMap() {
+    this.map = this.zone.runOutsideAngular(() =>
+      this.L.map(this.mapRef.nativeElement, {
+        center: POLAND_CENTER,
+        zoom: POLAND_ZOOM,
+        keyboard: true,
+        minZoom: 5,
+      }),
+    );
+    this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(this.map);
+    this.markersLayer = this.L.layerGroup().addTo(this.map);
+    this.userLayer = this.L.layerGroup().addTo(this.map);
     this.map.on('moveend', () => this.zone.run(() => this.boundsChanged$.next()));
 
     this.boundsChanged$
@@ -196,13 +204,12 @@ export class AedMapComponent implements OnInit, AfterViewInit {
     this.selected.set(null);
     if (this.map) {
       this.userLayer.clearLayers();
-      this.leaflet
-        .circleMarker([location.lat, location.lon], {
-          radius: 9,
-          color: '#0052a5',
-          fillColor: '#0052a5',
-          fillOpacity: 1,
-        })
+      this.L.circleMarker([location.lat, location.lon], {
+        radius: 9,
+        color: '#0052a5',
+        fillColor: '#0052a5',
+        fillOpacity: 1,
+      })
         .bindTooltip(this.translate.instant('Aed.Map.YouAreHere'))
         .addTo(this.userLayer);
       this.map.setView([location.lat, location.lon], LOCATED_ZOOM);
@@ -268,28 +275,26 @@ export class AedMapComponent implements OnInit, AfterViewInit {
   private drawMap(records: AedRecord[], clusters: AedCluster[]) {
     this.markersLayer.clearLayers();
     clusters.forEach((cluster) => {
-      this.leaflet
-        .circleMarker([cluster.lat, cluster.lon], {
-          radius: Math.min(30, 12 + Math.log2(cluster.liczba + 1) * 3),
-          color: '#0052a5',
-          fillColor: '#ffffff',
-          fillOpacity: 0.9,
-          weight: 3,
-        })
+      this.L.circleMarker([cluster.lat, cluster.lon], {
+        radius: Math.min(30, 12 + Math.log2(cluster.liczba + 1) * 3),
+        color: '#0052a5',
+        fillColor: '#ffffff',
+        fillOpacity: 0.9,
+        weight: 3,
+      })
         .bindTooltip(String(cluster.liczba), { permanent: true, direction: 'center', className: 'aed-cluster-label' })
         .on('click', () => this.map.setView([cluster.lat, cluster.lon], this.map.getZoom() + 2))
         .addTo(this.markersLayer);
     });
     records.forEach((record) => {
       const color = MARKER_COLORS[record.gotowosc] ?? MARKER_COLORS.NIEZNANY;
-      this.leaflet
-        .circleMarker([record.szerokosc_geograficzna, record.dlugosc_geograficzna], {
-          radius: 9,
-          color: '#ffffff',
-          weight: 2,
-          fillColor: color,
-          fillOpacity: 1,
-        })
+      this.L.circleMarker([record.szerokosc_geograficzna, record.dlugosc_geograficzna], {
+        radius: 9,
+        color: '#ffffff',
+        weight: 2,
+        fillColor: color,
+        fillOpacity: 1,
+      })
         .bindTooltip(`${record.nazwa_obiektu} – ${this.translate.instant('Aed.Readiness.' + record.gotowosc)}`)
         .on('click', () => this.zone.run(() => this.select(record)))
         .addTo(this.markersLayer);

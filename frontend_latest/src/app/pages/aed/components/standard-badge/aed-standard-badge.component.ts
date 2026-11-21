@@ -29,7 +29,7 @@ export interface AedValidationSummary {
       <a
         *ngIf="resourceId() && status() !== 'pending'"
         class="aed-standard__link"
-        [routerLink]="['/!aed', '!aedshare'] | localize"
+        [routerLink]="['/!aed', '!udostepnij'] | localize"
         [queryParams]="{ raport: resourceId() }">
         {{ 'Aed.Badge.ShowReport' | translate }}
       </a>

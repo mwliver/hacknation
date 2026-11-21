@@ -7,12 +7,12 @@ import { AedShareComponent } from '@app/pages/aed/share/aed-share.component';
 export const AED_ROUTES: Route[] = [
   { path: '', component: AedCampaignComponent },
   {
-    path: '!aedmap',
+    path: '!mapa',
     component: AedMapComponent,
     data: { breadcrumbs: { translationKey: 'Aed.Map.Title' } },
   },
   {
-    path: '!aedshare',
+    path: '!udostepnij',
     component: AedShareComponent,
     data: { breadcrumbs: { translationKey: 'Aed.Share.Title' } },
   },

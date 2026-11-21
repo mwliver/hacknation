@@ -58,3 +58,6 @@ error.log
 /junit.xml
 
 .github
+# Playwright (AED e2e)
+/e2e/.results
+/playwright-report

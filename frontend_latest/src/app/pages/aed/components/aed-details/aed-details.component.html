@@ -37,7 +37,7 @@
     </dd>
     <dt>{{ 'Aed.Field.Hours' | translate }}</dt>
     <dd>
-      <code>{{ record().godziny_dostepnosci }}</code> –
+      {{ record().godziny_dostepnosci }} –
       {{ (record().otwarte_teraz === true ? 'Aed.OpenNow.Open' : record().otwarte_teraz === false ? 'Aed.OpenNow.Closed' : 'Aed.OpenNow.Unknown') | translate }}
     </dd>
     <dt>{{ 'Aed.Field.Access' | translate }}</dt>

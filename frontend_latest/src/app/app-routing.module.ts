@@ -84,7 +84,7 @@ const routes: Routes = [
         path: '!aed',
         canMatch: [aedEnabledGuard],
         data: { breadcrumbs: { translationKey: 'Aed.Campaign.Breadcrumb' } },
-        loadChildren: () => import('./pages/aed/aed.routes').then((mod) => mod.AED_ROUTES),
+        loadChildren: () => import('./pages/aed/aed-routing.module').then((m) => m.AedRoutingModule),
       },
       {
         path: '!brokenlinks',

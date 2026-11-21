@@ -21,7 +21,7 @@
     <dl class="aed-list__facts">
       <div>
         <dt>{{ 'Aed.Field.Hours' | translate }}</dt>
-        <dd><code>{{ record.godziny_dostepnosci }}</code></dd>
+        <dd class="aed-list__hours">{{ record.godziny_dostepnosci }}</dd>
       </div>
       <div>
         <dt>{{ 'Aed.OpenNow.Label' | translate }}</dt>
@@ -34,8 +34,8 @@
       <div *ngIf="!record.dostep_publiczny || record.wymaga_kodu_lub_klucza">
         <dt>{{ 'Aed.Field.Access' | translate }}</dt>
         <dd>
-          <span *ngIf="!record.dostep_publiczny">{{ 'Aed.Access.StaffOnly' | translate }}</span>
-          <span *ngIf="record.wymaga_kodu_lub_klucza">{{ 'Aed.Access.CodeFromDispatcher' | translate }}</span>
+          <span *ngIf="!record.dostep_publiczny" class="d-block">{{ 'Aed.Access.StaffOnly' | translate }}</span>
+          <span *ngIf="record.wymaga_kodu_lub_klucza" class="d-block">{{ 'Aed.Access.CodeFromDispatcher' | translate }}</span>
         </dd>
       </div>
     </dl>
