@@ -127,6 +127,17 @@ class ResourceDocument(ExtendedDocument):
     files = files_field(attr="all_files")
     language = fields.KeywordField()
     contains_protected_data = fields.BooleanField()
+    data_standard = fields.KeywordField()
+    aed_validation = fields.ObjectField(
+        properties={
+            "standard": fields.KeywordField(),
+            "zgodny": fields.BooleanField(),
+            "liczba_wierszy": fields.IntegerField(),
+            "liczba_bledow": fields.IntegerField(),
+            "liczba_ostrzezen": fields.IntegerField(),
+            "data_walidacji": fields.DateField(),
+        }
+    )
 
     class Index:
         name = django_settings.ELASTICSEARCH_INDEX_NAMES["resources"]
@@ -148,6 +159,11 @@ class ResourceDocument(ExtendedDocument):
             return related_instance.special_signs_resources.filter(status="published")
         elif isinstance(related_instance, Resource):
             return related_instance.related_data.filter(status="published")
+
+    def prepare_aed_validation(self, instance):
+        from mcod.aed.services import report_summary
+
+        return report_summary(instance)
 
     def prepare_model_name(self, instance):
         return instance.category.type

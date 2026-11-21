@@ -1,0 +1,108 @@
+.aed-share {
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+
+  h2:focus {
+    outline: 3px solid #0052a5;
+    outline-offset: 2px;
+  }
+
+  &__lead {
+    max-width: 48rem;
+  }
+
+  &__downloads,
+  &__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  &__error {
+    min-height: 1.5rem;
+    margin: 0.25rem 0 0;
+    color: #b71c1c;
+    font-weight: 600;
+  }
+
+  &__fields code {
+    white-space: nowrap;
+  }
+
+  &__forbidden {
+    padding: 0.5rem 0.75rem;
+    border-left: 4px solid #b71c1c;
+    background: #ffebee;
+  }
+
+  input[type='file'] {
+    min-height: 44px;
+  }
+}
+
+.aed-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 1rem 0 1.5rem;
+  list-style: none;
+
+  &__item {
+    flex: 1 1 10rem;
+  }
+
+  &__button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #c4c4c4;
+    border-radius: 0.25rem;
+    background: #fff;
+    color: #1a1a1a;
+    text-align: left;
+
+    &:disabled {
+      color: #6b6b6b;
+      background: #f2f2f2;
+    }
+
+    &:focus-visible {
+      outline: 3px solid #0052a5;
+      outline-offset: 2px;
+    }
+  }
+
+  &__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 2px solid #0052a5;
+    color: #0052a5;
+    font-weight: 700;
+  }
+
+  &__item--current &__button {
+    border: 2px solid #0052a5;
+    font-weight: 700;
+  }
+
+  &__item--current &__number,
+  &__item--done &__number {
+    background: #0052a5;
+    color: #fff;
+  }
+}

@@ -1,0 +1,52 @@
+<p *ngIf="!records().length" class="aed-list__empty" data-test="aed-list-empty">{{ emptyMessageKey() | translate }}</p>
+
+<ol *ngIf="records().length" class="aed-list list-unstyled" [attr.aria-label]="listLabelKey() | translate">
+  <li
+    *ngFor="let record of records(); trackBy: trackById; let i = index"
+    class="aed-list__item"
+    [class.aed-list__item--selected]="record.id_aed_krajowe === selectedId()"
+    data-test="aed-list-item">
+    <div class="aed-list__header">
+      <span class="aed-list__number" aria-hidden="true">{{ i + 1 }}</span>
+      <h3 class="aed-list__name h6 mb-0">{{ record.nazwa_obiektu }}</h3>
+      <span *ngIf="record.odleglosc_m !== null" class="aed-list__distance" data-test="aed-distance">
+        <span class="visually-hidden">{{ 'Aed.List.Distance' | translate }}:</span>
+        {{ distance(record) }}
+      </span>
+    </div>
+    <p class="aed-list__location mb-1">
+      {{ record.opis_lokalizacji }}
+      <span class="text-muted">· {{ record.ulica ? record.ulica + ' ' + (record.nr_budynku || '') + ', ' : '' }}{{ record.miejscowosc }}</span>
+    </p>
+    <dl class="aed-list__facts">
+      <div>
+        <dt>{{ 'Aed.Field.Hours' | translate }}</dt>
+        <dd class="aed-list__hours">{{ record.godziny_dostepnosci }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Aed.OpenNow.Label' | translate }}</dt>
+        <dd [class.fw-bold]="record.otwarte_teraz === true">{{ openNowKey(record) | translate }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Aed.Readiness.Label' | translate }}</dt>
+        <dd><app-aed-readiness-badge [readiness]="record.gotowosc" /></dd>
+      </div>
+      <div *ngIf="!record.dostep_publiczny || record.wymaga_kodu_lub_klucza">
+        <dt>{{ 'Aed.Field.Access' | translate }}</dt>
+        <dd>
+          <span *ngIf="!record.dostep_publiczny" class="d-block">{{ 'Aed.Access.StaffOnly' | translate }}</span>
+          <span *ngIf="record.wymaga_kodu_lub_klucza" class="d-block">{{ 'Aed.Access.CodeFromDispatcher' | translate }}</span>
+        </dd>
+      </div>
+    </dl>
+    <button
+      type="button"
+      class="btn btn-outline-primary btn-sm aed-list__details"
+      data-test="aed-list-details"
+      [attr.aria-expanded]="record.id_aed_krajowe === selectedId()"
+      (click)="select(record)">
+      {{ 'Aed.List.Details' | translate }}
+      <span class="visually-hidden">– {{ record.nazwa_obiektu }}</span>
+    </button>
+  </li>
+</ol>

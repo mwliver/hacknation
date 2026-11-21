@@ -1,0 +1,63 @@
+.aed-details {
+  padding: 1rem;
+  border: 2px solid #0052a5;
+  border-radius: 0.25rem;
+  background: #fff;
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    h2:focus {
+      outline: 3px solid #0052a5;
+      outline-offset: 2px;
+    }
+  }
+
+  &__close {
+    min-height: 44px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: minmax(8rem, max-content) 1fr;
+    gap: 0.25rem 1rem;
+
+    dt {
+      font-weight: 600;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__sources {
+    padding-left: 1.25rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .aed-details__list {
+    grid-template-columns: 1fr;
+
+    dd {
+      margin-bottom: 0.5rem;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+<div class="container aed-campaign">
+  <app-aed-emergency-banner />
+
+  <header class="aed-campaign__hero" *ngIf="config$ | async as config">
+    <img
+      *ngIf="config.campaign_logo_url"
+      class="aed-campaign__logo"
+      [src]="config.campaign_logo_url"
+      [alt]="'Aed.Campaign.LogoAlt' | translate: { name: config.campaign_name }" />
+    <div>
+      <h1 class="aed-campaign__title">{{ config.campaign_name }}</h1>
+      <p class="aed-campaign__slogan">{{ config.campaign_slogan }}</p>
+      <p class="aed-campaign__lead">{{ 'Aed.Campaign.Lead' | translate }}</p>
+    </div>
+  </header>
+
+  <div class="aed-campaign__actions">
+    <a class="btn btn-primary btn-lg" [routerLink]="['/!aed', '!mapa'] | localize" data-test="aed-cta-find">
+      {{ 'Aed.Campaign.FindNearest' | translate }}
+    </a>
+    <a class="btn btn-outline-primary btn-lg" [routerLink]="['/!aed', '!udostepnij'] | localize" data-test="aed-cta-share">
+      {{ 'Aed.Campaign.ShareData' | translate }}
+    </a>
+  </div>
+
+  <section class="aed-campaign__stats" aria-labelledby="aed-stats-heading" *ngIf="stats$ | async as stats">
+    <h2 id="aed-stats-heading" class="h4">{{ 'Aed.Campaign.StatsHeading' | translate }}</h2>
+    <dl class="aed-stats">
+      <div class="aed-stats__item">
+        <dt>{{ 'Aed.Campaign.StatAeds' | translate }}</dt>
+        <dd data-test="aed-stat-count">{{ stats.liczba_aed | number: '1.0-0' }}</dd>
+      </div>
+      <div class="aed-stats__item">
+        <dt>{{ 'Aed.Campaign.StatProviders' | translate }}</dt>
+        <dd>{{ stats.liczba_dysponentow | number: '1.0-0' }}</dd>
+      </div>
+      <div class="aed-stats__item">
+        <dt>{{ 'Aed.Campaign.StatElectrodes' | translate }}</dt>
+        <dd>{{ stats.odsetek_z_data_waznosci_elektrod | number: '1.0-1' }}%</dd>
+      </div>
+    </dl>
+  </section>
+
+  <div class="row aed-campaign__blocks">
+    <section class="col-md-4" aria-labelledby="aed-why-heading">
+      <h2 id="aed-why-heading" class="h5">{{ 'Aed.Campaign.WhyHeading' | translate }}</h2>
+      <p>{{ 'Aed.Campaign.WhyText' | translate }}</p>
+    </section>
+    <section class="col-md-4" aria-labelledby="aed-how-heading">
+      <h2 id="aed-how-heading" class="h5">{{ 'Aed.Campaign.HowHeading' | translate }}</h2>
+      <ol>
+        <li>{{ 'Aed.Campaign.HowStep1' | translate }}</li>
+        <li>{{ 'Aed.Campaign.HowStep2' | translate }}</li>
+        <li>{{ 'Aed.Campaign.HowStep3' | translate }}</li>
+      </ol>
+    </section>
+    <section class="col-md-4" aria-labelledby="aed-who-heading">
+      <h2 id="aed-who-heading" class="h5">{{ 'Aed.Campaign.WhoHeading' | translate }}</h2>
+      <p *ngIf="stats$ | async as stats">
+        {{ 'Aed.Campaign.WhoText' | translate: { providers: stats.liczba_dysponentow, sources: stats.liczba_zrodel_danych } }}
+      </p>
+      <a [routerLink]="['/!dataset'] | localize" [queryParams]="{ q: 'AED' }">{{ 'Aed.Campaign.BrowseDatasets' | translate }}</a>
+    </section>
+  </div>
+</div>

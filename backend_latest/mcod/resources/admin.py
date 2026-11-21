@@ -27,6 +27,7 @@ from django_celery_beat.models import (
 )
 from rangefilter.filter import DateRangeFilter
 
+from mcod.aed import admin as aed_admin
 from mcod.core.choices import SOURCE_TYPE_CHOICES_FOR_ADMIN
 from mcod.core.decorators import prometheus_monitoring
 from mcod.datasets.admin import OrganizationFilter
@@ -279,6 +280,7 @@ class ResourceAdmin(HistoryMixin, ModelAdmin):  # MRO matters here for unescape
                 maps_and_plots_tab = ("maps_and_plots", _("Maps and plots"))
             tabs.append(maps_and_plots_tab)
         tabs.append(("supplements", _("Supplements")))
+        tabs.extend(aed_admin.resource_tabs(obj))
         return tabs
 
     list_display = [
@@ -321,6 +323,8 @@ class ResourceAdmin(HistoryMixin, ModelAdmin):  # MRO matters here for unescape
         ("widgets/resource_data_rules_actions.html", "bottom", "rules"),
         ("widgets/resource_maps_and_plots_actions.html", "bottom", "maps_and_plots"),
     )
+
+    aed_validation_report = aed_admin.aed_validation_report
 
     def source_type(self, obj: Resource) -> str:
         return SOURCE_TYPE_CHOICES_FOR_ADMIN.get(obj.source_type, obj.source_type)
@@ -549,6 +553,7 @@ class ResourceAdmin(HistoryMixin, ModelAdmin):  # MRO matters here for unescape
                 ]
             )
 
+        fieldsets = aed_admin.resource_fieldsets(fieldsets, obj)
         fieldsets += tuple(self.get_translations_fieldsets())
         return fieldsets
 
@@ -635,7 +640,7 @@ class ResourceAdmin(HistoryMixin, ModelAdmin):  # MRO matters here for unescape
                 "language",
                 "related_resource",
             )
-        return tuple(set(readonly_fields))
+        return tuple(set(readonly_fields) | set(aed_admin.resource_readonly_fields(obj)))
 
     def lang(self, obj):
         return obj.get_language_display()

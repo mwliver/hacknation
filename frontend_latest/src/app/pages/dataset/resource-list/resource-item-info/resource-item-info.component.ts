@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { StripHtmlWithExceptionPipe } from '@app/shared/pipes/strip-html-with-exception';
 import { TranslateDateFormatPipe } from '@app/shared/pipes/translate-date-format.pipe';
 import { TooltipDirective } from '@app/shared/tooltip/tooltip.directive';
+import { AedStandardBadgeComponent } from '@app/pages/aed/components/standard-badge/aed-standard-badge.component';
 
 @Component({
   selector: 'app-resource-item-info',
@@ -20,6 +21,7 @@ import { TooltipDirective } from '@app/shared/tooltip/tooltip.directive';
     TooltipDirective,
     TranslateDateFormatPipe,
     AsyncPipe,
+    AedStandardBadgeComponent,
   ],
 })
 export class ResourceItemInfoComponent {

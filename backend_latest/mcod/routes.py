@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from mcod.academy import views as academy_views
 from mcod.core.api.utils import views as core_views
 from mcod.core.api.views import MetricsResource
@@ -336,5 +338,9 @@ routes = [
     ("/reports/brokenlinks/{extension}", reports_views.PublicBrokenLinksReportDownloadView()),
 ]
 
+if settings.AED_ENABLED:
+    from mcod.aed.routes import routes as aed_routes
+
+    routes.extend(aed_routes)
 
 routes.extend(list(map(lambda x: ("/{api_version}" + x[0], *x[1:]), routes)))

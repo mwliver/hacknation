@@ -15,6 +15,7 @@ import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.co
 import { SitemapComponent } from './pages/sitemap/sitemap.component';
 
 import { APP_CONFIG } from '@app/app.config';
+import { aedEnabledGuard } from '@app/pages/aed/aed-enabled.guard';
 import { MainLayoutComponent } from '@app/layout/main-layout/main-layout.component';
 import { PageNotFoundComponent } from '@app/page-not-found/page-not-found.component';
 import { ContactFormComponent } from '@app/shared/forms/form-pages/contact-form/contact-form.component';
@@ -78,6 +79,12 @@ const routes: Routes = [
         data: { breadcrumbs: { translationKey: 'DgaInformationPoint.Self' } },
         loadChildren: () =>
           import('./pages/dga-information-point/dga-information-point.module').then((m) => m.DgaInformationPointModule),
+      },
+      {
+        path: '!aed',
+        canMatch: [aedEnabledGuard],
+        data: { breadcrumbs: { translationKey: 'Aed.Campaign.Breadcrumb' } },
+        loadChildren: () => import('./pages/aed/aed-routing.module').then((m) => m.AedRoutingModule),
       },
       {
         path: '!brokenlinks',

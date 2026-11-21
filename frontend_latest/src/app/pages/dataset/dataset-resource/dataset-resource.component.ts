@@ -37,6 +37,7 @@ import { TranslateDateFormatPipe } from '@app/shared/pipes/translate-date-format
 import { ResourceFiltersComponent } from '@app/shared/resource-filters/resource-filters.component';
 import { StarRatingComponent } from '@app/shared/star-rating/star-rating.component';
 import { selectTarget } from '@app/shared/util';
+import { AedStandardBadgeComponent } from '@app/pages/aed/components/standard-badge/aed-standard-badge.component';
 
 /**
  * Dataset Resource Component
@@ -70,6 +71,7 @@ import { selectTarget } from '@app/shared/util';
     DatasetResultsComponent,
     FormsModule,
     LocalizeRouterPipe,
+    AedStandardBadgeComponent,
   ],
 })
 export class DatasetResourceComponent implements OnInit, OnDestroy {

@@ -1,0 +1,74 @@
+.aed-campaign {
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+
+  &__hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__logo {
+    max-width: 160px;
+    max-height: 160px;
+  }
+
+  &__title {
+    margin-bottom: 0.25rem;
+  }
+
+  &__slogan {
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: #b71c1c;
+    margin-bottom: 0.5rem;
+  }
+
+  &__lead {
+    max-width: 48rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    .btn {
+      min-height: 44px;
+      flex: 1 1 16rem;
+      max-width: 24rem;
+    }
+  }
+
+  &__blocks section {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.aed-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  &__item {
+    padding: 1rem;
+    border: 1px solid #c4c4c4;
+    border-radius: 0.25rem;
+    background: #f5f8fc;
+
+    dt {
+      font-weight: 400;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0052a5;
+    }
+  }
+}

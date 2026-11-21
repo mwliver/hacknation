@@ -70,6 +70,224 @@
     "DownloadAll": "Pobierz cały zbiór",
     "Copied": "Skopiowano"
   },
+  "Aed": {
+    "Readiness": {
+      "Label": "Gotowość",
+      "GOTOWY": "Gotowy",
+      "WYMAGA_UWAGI": "Wymaga uwagi",
+      "NIEZNANY": "Gotowość nieznana",
+      "NIEGOTOWY": "Niegotowy"
+    },
+    "Emergency": {
+      "Text": "W nagłym zatrzymaniu krążenia najpierw dzwoń 112.",
+      "Call": "Zadzwoń 112"
+    },
+    "Badge": {
+      "Standard": "Standard AED v1",
+      "compliant": "zgodny ze standardem",
+      "errors": "{errors, plural, =1 {1 błąd} few {{errors} błędy} other {{errors} błędów}}",
+      "pending": "walidacja w toku",
+      "ShowReport": "Raport walidacji"
+    },
+    "Report": {
+      "Heading": "Raport walidacji",
+      "Compliant": "Plik jest zgodny ze standardem AED v1.",
+      "NotCompliant": "Plik nie jest zgodny ze standardem AED v1 – popraw błędy.",
+      "Rows": "Wiersze danych",
+      "Errors": "Błędy",
+      "Warnings": "Ostrzeżenia",
+      "Show": "Pokaż",
+      "Level": {
+        "Self": "Poziom",
+        "ALL": "Wszystkie",
+        "ERROR": "Błąd",
+        "WARNING": "Ostrzeżenie"
+      },
+      "ExportCsv": "Pobierz raport (CSV)",
+      "TableLabel": "Lista problemów w pliku",
+      "Row": "Wiersz",
+      "Column": "Kolumna",
+      "Message": "Opis problemu",
+      "NoIssuesForFilter": "Brak problemów tego rodzaju."
+    },
+    "List": {
+      "Empty": "Brak AED w tym obszarze.",
+      "NearestLabel": "Najbliższe AED",
+      "InViewLabel": "AED widoczne na mapie",
+      "Distance": "Odległość",
+      "Details": "Szczegóły",
+      "NearestHeading": "Najbliższe AED",
+      "From": "Od",
+      "NoneNearbyShort": "Brak AED w promieniu 5 km. Powiększ obszar mapy albo zmień filtry.",
+      "InViewHeading": "AED w widoku mapy ({count})",
+      "ZoomIn": "W tym obszarze jest zbyt wiele AED, aby wyświetlić listę. Przybliż mapę albo wyszukaj adres.",
+      "FoundNearest": "Znaleziono {count, plural, =1 {1 AED} few {{count} AED} other {{count} AED}} w pobliżu.",
+      "NoneNearby": "Brak AED w promieniu {km} km."
+    },
+    "OpenNow": {
+      "Label": "Teraz",
+      "Open": "Otwarte teraz",
+      "Closed": "Teraz zamknięte",
+      "Unknown": "Godziny nieznane – sprawdź opis"
+    },
+    "Field": {
+      "Hours": "Godziny dostępności",
+      "Access": "Dostęp",
+      "Address": "Adres",
+      "Location": "Gdzie dokładnie",
+      "Floor": "Piętro",
+      "DeviceStatus": "Status urządzenia",
+      "Verification": "Weryfikacja danych",
+      "LastInspection": "Ostatnia kontrola",
+      "ElectrodesExpiry": "Ważność elektrod",
+      "BatteryExpiry": "Ważność baterii",
+      "Updated": "Aktualizacja danych"
+    },
+    "Access": {
+      "Public": "Dostępny dla wszystkich",
+      "StaffOnly": "Tylko dla personelu obiektu",
+      "CodeFromDispatcher": "Szafka zamknięta – kod lub klucz poda dyspozytor 112"
+    },
+    "Details": {
+      "Navigate": "Nawiguj",
+      "OpensMapApp": "otwiera aplikację z mapą",
+      "ReportProblem": "Zgłoś problem z tym AED",
+      "Indoors": "wewnątrz budynku",
+      "Outdoors": "na zewnątrz",
+      "NoData": "brak danych",
+      "Sources": "Źródła danych ({count})",
+      "PrimarySource": "źródło rozstrzygające",
+      "SourceDataset": "zbiór danych"
+    },
+    "DeviceStatus": {
+      "SPRAWNY": "Sprawny",
+      "NIESPRAWNY": "Niesprawny",
+      "CZASOWO_NIEDOSTEPNY": "Czasowo niedostępny",
+      "NIEZNANY": "Nieznany"
+    },
+    "Verification": {
+      "ZWERYFIKOWANY": "Zweryfikowane na miejscu",
+      "NIEZWERYFIKOWANY": "Niezweryfikowane",
+      "WATPLIWY": "Wątpliwe"
+    },
+    "Source": {
+      "WLASCICIEL": "właściciel urządzenia",
+      "JST": "samorząd",
+      "OSM": "OpenStreetMap",
+      "APLIKACJA": "aplikacja",
+      "INNE": "inne źródło"
+    },
+    "Map": {
+      "Title": "Znajdź najbliższy AED",
+      "YouAreHere": "Twoja lokalizacja",
+      "MapLabel": "Mapa defibrylatorów AED",
+      "MapDescription": "Mapę przesuwasz strzałkami, a przybliżasz klawiszami + i −. Wszystkie AED z mapy są też na liście tekstowej obok (na telefonie – pod mapą).",
+      "Legend": "Legenda kolorów gotowości"
+    },
+    "Geolocation": {
+      "Locating": "Ustalam Twoją lokalizację…",
+      "MyLocation": "Twoja lokalizacja",
+      "Denied": "Nie udostępniono lokalizacji. Wpisz adres lub miejscowość poniżej.",
+      "Unavailable": "Nie udało się ustalić lokalizacji. Wpisz adres lub miejscowość.",
+      "Timeout": "Ustalanie lokalizacji trwało zbyt długo. Wpisz adres lub miejscowość.",
+      "Unsupported": "Ta przeglądarka nie udostępnia lokalizacji. Wpisz adres lub miejscowość."
+    },
+    "Search": {
+      "Heading": "Wyszukiwanie miejsca",
+      "MyLocation": "Moja lokalizacja",
+      "AddressLabel": "Adres lub miejscowość",
+      "AddressHint": "Np. Otwock, ul. Kolejowa 1",
+      "Submit": "Szukaj",
+      "TooShort": "Wpisz co najmniej 3 znaki.",
+      "Searching": "Szukam adresu…",
+      "NotFound": "Nie znaleziono takiego adresu. Sprawdź pisownię lub wpisz samą miejscowość.",
+      "Error": "Wyszukiwarka adresów jest chwilowo niedostępna. Użyj przycisku „Moja lokalizacja” lub przesuń mapę."
+    },
+    "Filters": {
+      "Legend": "Filtry",
+      "OpenNow": "Tylko otwarte teraz",
+      "PublicAccess": "Tylko dostęp publiczny",
+      "Readiness": "Gotowość",
+      "Any": "dowolna"
+    },
+    "Campaign": {
+      "Title": "Misja AED",
+      "Breadcrumb": "Misja AED",
+      "LogoAlt": "Logo akcji {name}",
+      "Lead": "Budujemy otwarty, ogólnopolski zbiór danych o defibrylatorach AED – z danych wielu dysponentów, w jednym wzorcowym formacie.",
+      "FindNearest": "Znajdź najbliższy AED",
+      "ShareData": "Udostępnij dane o AED",
+      "StatsHeading": "Zbiór krajowy w liczbach",
+      "StatAeds": "Defibrylatory w zbiorze krajowym",
+      "StatProviders": "Dysponenci danych",
+      "StatElectrodes": "Rekordy z datą ważności elektrod",
+      "WhyHeading": "Po co?",
+      "WhyText": "W nagłym zatrzymaniu krążenia liczą się minuty. Każda minuta bez defibrylacji zmniejsza szansę przeżycia. Dyspozytor 112 i świadkowie zdarzenia muszą szybko wiedzieć, gdzie jest najbliższy AED, czy jest dostępny i czy działa.",
+      "HowHeading": "Jak udostępnić dane?",
+      "HowStep1": "Pobierz szablon i uzupełnij dane o swoich AED.",
+      "HowStep2": "Sprawdź plik w kreatorze – zobaczysz listę błędów do poprawy.",
+      "HowStep3": "Opublikuj zasób w dane.gov.pl i oznacz go jako „Standard AED v1”.",
+      "WhoHeading": "Kto już udostępnia?",
+      "WhoText": "Dane udostępnia {providers, plural, =1 {1 dysponent} few {{providers} dysponentów} other {{providers} dysponentów}} w {sources, plural, =1 {1 zasobie} other {{sources} zasobach}} danych.",
+      "BrowseDatasets": "Przeglądaj zbiory danych o AED"
+    },
+    "Share": {
+      "Title": "Udostępnij dane o AED",
+      "Lead": "Kreator pomoże Ci przygotować plik zgodny ze wzorcowym zakresem danych AED v1 i sprawdzić go przed publikacją w dane.gov.pl. Sprawdzenie pliku niczego nie publikuje.",
+      "StepsLabel": "Kroki kreatora",
+      "Step": "Krok {n}",
+      "StepName": {
+        "1": "Pobierz szablon",
+        "2": "Wgraj i sprawdź plik",
+        "3": "Raport",
+        "4": "Opublikuj"
+      },
+      "Template": {
+        "Text": "Szablon zawiera wszystkie kolumny standardu AED v1. Jeden wiersz to jeden defibrylator. Opis pól poniżej jest generowany ze schematu standardu.",
+        "Xlsx": "Pobierz szablon XLSX",
+        "Csv": "Pobierz szablon CSV",
+        "RulesHeading": "Zasady pliku",
+        "FieldsHeading": "Opis pól",
+        "Column": "Kolumna",
+        "Description": "Opis",
+        "Presence": "Wypełnienie",
+        "Example": "Przykład",
+        "Allowed": "Dozwolone wartości",
+        "Forbidden": "Kolumny zakazane (plik zostanie odrzucony)"
+      },
+      "Presence": {
+        "required": "wymagane",
+        "if_known": "jeśli znane",
+        "extended": "opcjonalna kolumna"
+      },
+      "Next": "Dalej",
+      "Back": "Wstecz",
+      "Upload": {
+        "Text": "Wybierz plik CSV (UTF-8, przecinek jako separator) lub XLSX (pierwszy arkusz, bez makr).",
+        "Label": "Plik z danymi o AED",
+        "Hint": "Dozwolone typy: CSV, XLSX. Maksymalny rozmiar: {mb} MB.",
+        "Check": "Sprawdź plik",
+        "Checking": "Sprawdzam plik…",
+        "NoFile": "Wybierz plik do sprawdzenia.",
+        "WrongType": "Nieobsługiwany typ pliku. Wybierz plik CSV lub XLSX.",
+        "TooLarge": "Plik jest za duży (maksymalnie {mb} MB).",
+        "ServerError": "Nie udało się sprawdzić pliku. Spróbuj ponownie za chwilę."
+      },
+      "ReportForResource": "Raport walidacji zasobu nr {id} opublikowanego w portalu.",
+      "ReportForFile": "Raport dla pliku {name}.",
+      "FixAndRetry": "Popraw wskazane wiersze i kolumny w pliku, a następnie sprawdź go ponownie.",
+      "CheckAnother": "Sprawdź inny lub poprawiony plik",
+      "Publish": {
+        "Step1": "Zaloguj się do panelu dostawcy danych dane.gov.pl.",
+        "Step2": "Dodaj zbiór danych (np. „Defibrylatory AED – nazwa instytucji”) albo wybierz istniejący.",
+        "Step3": "Dodaj zasób: wgraj sprawdzony plik CSV lub XLSX.",
+        "Step4": "W polu „Standard danych” wybierz „Standard AED v1” i zapisz zasób.",
+        "Step5": "Portal sprawdzi plik automatycznie. Zgodne zasoby trafią do krajowego zbioru AED przy najbliższej aktualizacji (codziennie).",
+        "OpenPanel": "Przejdź do panelu dostawcy"
+      },
+      "NewWindow": "otwiera się w nowym oknie"
+    }
+  },
   "ActivityNotification": {
     "object_restored": "Przywrócono",
     "object_trashed": "Usunięto",

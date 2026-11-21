@@ -60,6 +60,14 @@
       width="20" />
   </h2>
 
+  <!-- AED v1 data standard badge (only for AED resources with the backend AED feature enabled) -->
+  <p *ngIf="item.attributes?.aed_validation" class="mb-1">
+    <app-aed-standard-badge
+      [dataStandard]="item.attributes.data_standard"
+      [validation]="item.attributes.aed_validation"
+      [resourceId]="item.id" />
+  </p>
+
   <!-- availability (created) date-->
   <span *ngIf="item.attributes?.created && isSortParamsCreated">
     <strong class="pr-1"> {{ 'Attribute.AvailabilityDate' | translate }}:</strong>

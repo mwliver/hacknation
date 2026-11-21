@@ -1,6 +1,6 @@
 # Misja AED – plan prac (prototyp na dane.gov.pl)
 
-Status: **Faza 0 – plan czeka na akceptację.** Kod nie został jeszcze zmieniony.
+Status: **Plan zaakceptowany 2026-11-21 (wszystkie rekomendacje z sekcji 4). Faza 1 zakończona.** Gałąź: `feature/aed`.
 Data: 2026-11-21
 
 ---
@@ -179,10 +179,10 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 ## 5. Postęp
 
 - [x] Faza 0 – eksploracja i plan (2026-11-21)
-- [ ] Faza 1
-- [ ] Faza 2
-- [ ] Faza 3
-- [ ] Faza 4
+- [x] Faza 1 – schemat v1, loader, generatory CSV/XLSX, `export_aed_standard` (2026-11-21)
+- [x] Faza 2 – flaga AED na zasobie, walidator, raport w adminie i API, `POST /aed/validate` (2026-11-21)
+- [x] Faza 3 – agregacja, deduplikacja, indeks `aed`, API `/aed`, `nearest`, `{id}`, `stats` (2026-11-21)
+- [x] Faza 4 – frontend: strona akcji, mapa, kreator dysponenta, odznaki (2026-11-21; weryfikacja 1440/360 px i klawiatury Playwrightem w fazie 5)
 - [ ] Faza 5
 
 ### Znane problemy / ryzyka
@@ -190,3 +190,75 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 - Django 2.2 / Python 3.8 – bez `match`, bez `zoneinfo` w stdlib → strefa przez `django.utils.timezone` + `pytz` (jest w zależnościach Django 2.2).
 - Elasticsearch 6.x (django-elasticsearch-dsl 6.4) – `geotile_grid` dostępne od ES 7.0; jeśli klaster jest 6.x, użyjemy `geohash_grid` (sprawdzę wersję w fazie 3).
 - Geokodowanie adresu przez publiczny Nominatim (już używany w portalu) – limity użycia, zostaje jako znane ograniczenie.
+
+### Decyzje po akceptacji (2026-11-21)
+Przyjęte rekomendacje z sekcji 4: (1) klastrowanie po stronie serwera, bez `leaflet.markercluster`; (2) `@playwright/test` jako devDependency frontendu do zrzutów ekranu; (3) fikcyjna instytucja „Krajowy rejestr AED (prototyp)”; (4) licencja CC BY 4.0; (5) warunkowy krok w `entrypoint_process_resource_file_validation_task`; (6) brak `data_ostatniej_kontroli` → `NIEZNANY`.
+
+### Faza 1 – co zrobiono
+- `mcod/aed/` (app `AedConfig`, w `INSTALLED_APPS`), ustawienia `AED_*` na końcu `mcod/settings/base.py` (`AED_ENABLED=False` domyślnie, `True` w `mcod/settings/test.py`).
+- `mcod/aed/schema/aed_v1.json` – schemat (22 pola podstawowe + 7 rozszerzonych, słowniki z etykietami PL/EN, pola zakazane, priorytet źródeł, zasady pliku, 3 fikcyjne przykłady). `mcod/aed/schema/__init__.py` – jedyny loader listy pól (+ `normalize_header`, `is_forbidden_header`, `frictionless_schema`).
+- `mcod/aed/export.py` – CSV (UTF-8 bez BOM), XLSX (`dane` z listami rozwijanymi dla słowników/booleanów i komórkami tekstowymi, `opis_pol`, `slowniki`, `zasady_pliku`), JSON.
+- `manage.py export_aed_standard --out <dir>`; wygenerowane pliki skopiowane do `docs/aed/`.
+- Testy: `mcod/aed/tests/test_schema.py`, `test_export.py` – 57 passed. Lint (isort/black/flake8 w wersjach z pre-commit) – OK.
+
+### Jak uruchamiać (Windows, ten checkout)
+- `sh docs/aed/scripts/backend.sh test -n1 mcod/aed/tests --no-cov -p no:cacheprovider`
+- `sh docs/aed/scripts/lint_backend.sh [--fix]`
+- Eksport: `sh docs/aed/scripts/backend.sh run python manage.py export_aed_standard --out data/aed_export && cp backend_latest/data/aed_export/* docs/aed/`
+
+### Znane problemy (środowisko)
+- **Działający stack Dockera (`mcod-api`, `mcod-admin`, `mcod-celery`…) montuje kod z `C:\Users\mwliv\IdeaProjects\backend_latest`, nie z `hacknation/backend_latest`.** Żeby zobaczyć zmiany AED w działającym API/adminie, trzeba uruchomić stack z tego katalogu (albo przepiąć montowania). Nazwa projektu compose jest ta sama (`backend_latest`), dlatego skrypty używają `--no-deps`.
+- `core.autocrlf=true` → skrypty `.sh` w repo mają CRLF; `docker compose build` obrazu testowego się wywraca (`distrust-emudhra-roots: not found`), a `tests-entrypoint.sh` nie startuje. Obejście w `docs/aed/scripts/backend.sh` (istniejący obraz `mcod-app:local-tests` + `tr -d '\r'`). Plików portalu nie zmieniałem.
+- `black` nie jest zainstalowany w obrazie – `lint_backend.sh` instaluje go tymczasowo w kontenerze.
+
+### Następny krok: Faza 2
+`Resource.data_standard` (migracja + form/admin/ES/serializery), tag AED, `opening_hours.py`, `validation.py` + fixtures po jednym na regułę, `AedValidationReport`, zadanie Celery i wpięcie w pipeline, zakładka w adminie, endpointy `validate`, `schema`, `template.*`, `reports/{id}`, `config`.
+
+### Faza 2 – co zrobiono (2026-11-21)
+- `mcod/aed/validation.py` (czysta funkcja `validate_file`), `opening_hours.py` (podzbiór + święta PL), `geo.py` (haversine, pary bliskich punktów na siatce).
+- Reguły ERROR: `UNSUPPORTED_FILE, FILE_TOO_LARGE, UNREADABLE_FILE, EMPTY_FILE, ENCODING, DELIMITER, TOO_MANY_ROWS, EMPTY_COLUMN_HEADER, DUPLICATE_COLUMN, FORBIDDEN_COLUMN, MISSING_COLUMN, EMPTY_ROW, ROW_LENGTH, REQUIRED_EMPTY, INVALID_DATE, INVALID_NUMBER, INVALID_INTEGER, INVALID_BOOLEAN, INVALID_FORMAT, TOO_LONG, OUT_OF_RANGE, OUT_OF_POLAND, ENUM_VALUE, DUPLICATE_ID, FUTURE_UPDATE_DATE`; WARNING: `UTF8_BOM, UNKNOWN_COLUMN, STALE_UPDATE, OPENING_HOURS_UNSUPPORTED, ELECTRODES_EXPIRED, BATTERY_EXPIRED, NEAR_DUPLICATE_5M, POSTAL_CODE_FORMAT`.
+- Doprecyzowania: słowniki i booleany akceptowane bez względu na wielkość liter (normalizowane); kod pocztowy `NNNNN` → WARNING i zapis `NN-NNN`; numer wiersza = numer linii pliku (nagłówek = 1).
+- Fixtures: `mcod/aed/tests/fixtures/validation/*.csv` + `manifest.json`, generowane `node docs/aed/scripts/gen_validation_fixtures.mjs`.
+- Integracja z portalem: `Resource.data_standard` (migracja `resources/0076`), `AedValidationReport` (`aed/0001`), `mcod.aed.tasks.validate_aed_resource_task` (kolejka `resources`), krok 2a w `entrypoint_process_resource_file_validation_task`, sygnał post_save (tag „AED” pl/en na zbiorze + walidacja po zmianie standardu), admin: pole „Standard danych” + zakładka „AED v1 standard” z raportem, ES `resources`: `data_standard`, `aed_validation`; API zasobu: `data_standard`, `aed_validation`; filtr `data_standard` w `/resources`.
+- Endpointy (tylko przy `AED_ENABLED`): `/aed/schema`, `/aed/template.csv`, `/aed/template.xlsx` (`?przyklady=true`), `POST /aed/validate` (multipart `file`, CSV/XLSX, 10 MB, rate limiter, nic nie zapisuje), `/aed/reports/{resource_id}`, `/aed/config`.
+- Odstępstwo od planu: odznaka na poziomie zbioru będzie liczona we froncie z listy zasobów (API `datasets/{id}/resources` zwraca `data_standard` i `aed_validation`), bez nowego pola w dokumencie zbioru – mniej zmian w istniejących indeksach.
+- Testy: `mcod/aed` + regresja całego `mcod/resources`: 1115 passed, 1 skipped, 4 xfailed, 2 xpassed, 0 failed (41 min, -n3). Lint AED: OK.
+- Pamiętać: nowe pola w dokumencie ES `resources` wymagają `manage.py search_index --rebuild -f --models resources.Resource` na środowisku.
+
+### Faza 3 – co zrobiono (2026-11-21)
+- `mcod/aed/readiness.py` – `gotowosc` (NIEGOTOWY → NIEZNANY → WYMAGA_UWAGI → GOTOWY, Europe/Warsaw; data ważności = ważna do końca dnia; brak daty kontroli → NIEZNANY) i `otwarte_teraz`.
+- `mcod/aed/aggregation.py` – normalizacja, union-find: (1) ta sama para `zrodlo_danych`+`zrodlo_id`, (2) różne zasoby < 25 m + ta sama miejscowość (porównanie bez wielkości liter i polskich znaków) + ta sama ulica, jeśli obie znane (bez prefiksów „ul.”, „al.”…); scalanie wg priorytetu źródeł, remis → nowsza data; puste pola uzupełniane, ale pola tożsamości (`id_aed`, `dysponent`, `zrodlo_danych`, `zrodlo_id`) nigdy nie są mieszane.
+- Modele `AedRecord` (dane schematu w JSON + kolumny do zapytań) i `AedSourceLink` (`db_table = aed_source_link`), migracje `aed/0002`, `aed/0003` (PeriodicTask codziennie 03:30, kolejka `periodic`; zadanie nic nie robi przy `AED_ENABLED=False`).
+- `mcod/aed/national.py` – budowa: tylko zasoby AED v1 opublikowane, w opublikowanych zbiorach, z ostatnim raportem bez ERROR (plik walidowany ponownie przed użyciem); stabilne `id_aed_krajowe` między przebudowami; publikacja jako zwykły zbiór (instytucja `AED_NATIONAL_ORGANIZATION_ID`, kategoria `HEAL`, tagi AED/defibrylator/pierwsza pomoc, CC BY 4.0, `update_frequency=daily`), zasoby `aed_krajowy.csv`, `aed_krajowy.geojson`, `aed_powiazania_zrodel.csv` – podmiana głównego `ResourceFile` uruchamia standardowy pipeline portalu (podgląd, mapa, openness, ES, RDF).
+- ES 6.8 → klastry z `geohash_grid` + `geo_centroid` (`GET /aed?bbox=…&klastry=true&precyzja=1..12`, wynik w `meta.aggregations.klastry`). Indeks `aed` (`AedDocument`, `ignore_signals`, indeksowany po budowie). `gotowosc` filtrowana zapytaniem ES liczonym względem dzisiejszej daty; `otwarte_teraz` filtrowane w Pythonie na oknie 2000 wyników (ograniczenie).
+- Endpointy: `GET /aed` (filtry: `miejscowosc`, `kod_teryt_gminy` – prefiks, `status_urzadzenia`, `dostep_publiczny`, `otwarte_teraz`, `gotowosc`, `bbox`, `page`, `per_page`), `GET /aed/nearest` (`lat`, `lon`, `limit` ≤ 50, `max_km` ≤ 50, `include_unavailable`, + filtry), `GET /aed/{uuid}` (z `zrodla`), `GET /aed/stats`. NIESPRAWNY zawsze ukryty; `nearest` domyślnie pomija CZASOWO_NIEDOSTEPNY.
+- Atrybuty API generowane ze schematu (biała lista) – pola zakazane nie mogą się pojawić.
+- Komendy: `build_aed_national_dataset [--no-publish] [--no-index]`, `aed_demo_data [--no-build]` (fikcyjni dostawcy z `mcod/aed/tests/fixtures/providers`, generowani `node docs/aed/scripts/gen_provider_fixtures.mjs`: 13 wierszy → 10 rekordów).
+- Znalezisko: `TopLevel` z `aggs_schema` mutuje współdzielony `TopLevelMeta._declared_fields` – AED używa własnej podklasy `AedTopLevelMeta` (test regresyjny `test_clusters_survive_other_api_serializers`).
+- Testy AED: 213 passed; regresja `mcod/core` + `mcod/search`: 410 passed, 2 xfailed. Lint AED: OK.
+
+### Jak uruchomić zbiór krajowy lokalnie
+```
+AED_ENABLED=True python manage.py migrate
+AED_ENABLED=True python manage.py search_index --create --models aed.AedRecord
+AED_ENABLED=True python manage.py aed_demo_data          # wypisze AED_NATIONAL_ORGANIZATION_ID
+```
+
+### Faza 4 – co zrobiono (2026-11-21)
+- `frontend_latest/src/app/pages/aed/` (standalone, lazy `AED_ROUTES`, `canMatch: aedEnabledGuard` → `GET /aed/config`; przy `AED_ENABLED=False` 404):
+  - `/aed` – strona akcji (`AED_CAMPAIGN_NAME/SLOGAN/LOGO_URL` z `/aed/config`, liczniki z `/aed/stats`, 3 bloki, 2 przyciski),
+  - `/aed/mapa` (`/en/aed/map`) – Leaflet + kafelki OSM z atrybucją (istniejący `LeafletService`), klastry z API (`geohash_grid`), „Moja lokalizacja” (Geolocation API z obsługą odmowy/timeoutu/braku), wyszukiwanie adresu (istniejący `NominatimGeocodeService`), filtry (otwarte teraz, dostęp publiczny, gotowość), lista 5 najbliższych + lista „AED w widoku mapy” (tekstowy odpowiednik mapy), szczegóły (adres, opis, godziny, statusy, daty, źródła, „Nawiguj” – `geo:`/Apple Maps/OSM, „Zgłoś problem” – istniejący formularz uwag do zasobu źródłowego dysponenta), stały baner „najpierw dzwoń 112” z `tel:112`,
+  - `/aed/udostepnij` (`/en/aed/share`) – kreator 4 kroków (szablon + opis pól ze `/aed/schema`, wgranie i sprawdzenie `POST /aed/validate`, raport z filtrem i eksportem CSV, instrukcja publikacji); `?raport=<id zasobu>` pokazuje raport opublikowanego zasobu.
+- Odznaka „Standard AED v1” ze statusem i linkiem do raportu na stronie zasobu i na liście zasobów zbioru (`app-aed-standard-badge`, renderowana tylko gdy API zwraca `aed_validation`).
+- i18n: sekcja `Aed` w `pl.json`/`en.json`, wstawiana tekstowo skryptem `node docs/aed/scripts/merge-i18n.js` ze źródła `docs/aed/scripts/aed-i18n.json` (reszta plików bez zmian). Trasy: stałe segmenty `!aed`, `!mapa`, `!udostepnij` (w tym portalu `!` = segment nietłumaczony, jak `/pl/dataset` i `/en/dataset`), lazy przez `AedRoutingModule` z `LocalizeRouterModule.forChild` (poprawione w fazie 5).
+- Dostępność: gotowość = tekst + ikona + kolor (kontrast ≥ 4.5:1), komunikaty `role="status"`/`role="alert"`, pola z `aria-describedby`, fokus na nagłówku kroku/szczegółów, cele ≥ 44×44 px, mobile-first (lista pod mapą < 992 px), `table-responsive` z `tabindex=0`.
+- Testy Jest: AED 25, cały frontend 948/948 (140 zestawów), `ng build` OK, ESLint AED OK. Zakres: serwis API (mock HTTP), filtry/eksport CSV/nawigacja, raport walidacji, lista najbliższych, geolokalizacja (odmowa, brak API, timeout).
+- Znalezisko: `ServiceTestbed` ustawia `provideHttpClientTesting()` przed `provideHttpClient()`, więc istniejące testy serwisów używają prawdziwego backendu HTTP i nie weryfikują żądań. Nie zmieniałem go (cudze testy); spec AED ma poprawną kolejność.
+- Do weryfikacji w fazie 5: 1440 px / 360 px i przejście klawiaturą – Playwright z zamockowanym API (działający stack nie serwuje kodu AED).
+
+### Faza 5 – co zrobiono (2026-11-21)
+- Playwright (`@playwright/test`, devDependency frontendu – zgoda z sekcji 4): `frontend_latest/playwright.config.ts`, `e2e/aed/aed.spec.ts`, `e2e/aed/api-mocks.ts` (fikcyjne dane, API AED zamockowane), `npm run e2e:aed`. 10 scenariuszy: strona akcji 1440 px, flaga wyłączona → 404, mapa 1440 px (lista obok mapy, odległość, godziny, otwarte teraz, gotowość, szczegóły, „Nawiguj”, „Zgłoś problem”), telefon 360 px (lista pod mapą, brak poziomego przewijania, cele ≥ 44 px), odmowa geolokalizacji → komunikat + fokus na adresie + wyszukiwanie, **przejście klawiaturą** (adres → szukaj → filtr → „Szczegóły” → fokus na nagłówku szczegółów, widoczny fokus), kreator (plik z błędami → raport, filtr, poprawiony plik → zgodny → publikacja), odrzucenie złego typu pliku (`aria-invalid`, `aria-describedby`), kreator 360 px, wersja EN.
+- Zrzuty ekranu: `docs/aed/screenshots/01…07_*.png` (lista w `ZRZUTY_EKRANU.md`).
+- Błędy wykryte przez e2e i poprawione: (1) trasy dzieci lazy nie były rozpoznawane (brak `LocalizeRouterModule.forChild`, a `!` w tym portalu oznacza segment nietłumaczony); (2) kreator nie importował `FormsModule` → `<form (ngSubmit)>` robił natywny submit i przeładowanie; (3) istniejący `LeafletService` ładuje Leaflet przez `require()`, którego dev-server (esbuild/Vite) nie obsługuje – mapa AED ładuje Leaflet przez `import('leaflet')` tylko w przeglądarce (współdzielonego serwisu nie zmieniałem; istniejące mapy portalu w `ng serve` mają ten sam problem); (4) poprawki czytelności listy (godziny bez `code`, teksty dostępu w osobnych liniach).
+- Pierwsza wizyta pokazuje modal RODO portalu (`localStorage OD_isAcquintedWithRodo`) – e2e ustawia go jak dla powracającego użytkownika.
+- Dokumentacja: `README_AED.md` (opis, diagram Mermaid, uruchomienie, endpointy), `KROKI_UZYTKOWNIKA.md`, `OGRANICZENIA.md`, `ZRZUTY_EKRANU.md`, pliki z sekcji 3.5.

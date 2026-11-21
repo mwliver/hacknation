@@ -1,0 +1,168 @@
+.aed-map-page {
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.aed-search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  &__locate {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-end;
+    margin-bottom: 2.4rem;
+
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      fill: currentColor;
+    }
+  }
+
+  &__form {
+    flex: 1 1 18rem;
+    min-width: 0;
+  }
+
+  &__row {
+    display: flex;
+    gap: 0.5rem;
+
+    .form-control,
+    .btn {
+      min-height: 44px;
+    }
+  }
+
+  &__error {
+    min-height: 1.5rem;
+    margin: 0;
+    color: #b71c1c;
+    font-weight: 600;
+  }
+}
+
+.aed-filters {
+  margin-bottom: 1rem;
+
+  fieldset {
+    border: 1px solid #c4c4c4;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem 0.75rem;
+  }
+
+  legend {
+    float: none;
+    width: auto;
+    padding: 0 0.25rem;
+    margin-bottom: 0;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .form-check {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+
+    .form-check-input {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin: 0;
+    }
+  }
+
+  &__select {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .form-select {
+      min-height: 44px;
+      width: auto;
+    }
+  }
+}
+
+.aed-map {
+  width: 100%;
+  height: 60vh;
+  min-height: 320px;
+  border: 1px solid #c4c4c4;
+  border-radius: 0.25rem;
+
+  &:focus-visible {
+    outline: 3px solid #0052a5;
+    outline-offset: 2px;
+  }
+}
+
+.aed-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: 0.875rem;
+
+  &__dot {
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-right: 0.35rem;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #4a4a4a;
+    vertical-align: middle;
+
+    &--GOTOWY {
+      background: #1b5e20;
+    }
+
+    &--WYMAGA_UWAGI {
+      background: #b35c00;
+    }
+
+    &--NIEZNANY {
+      background: #455a64;
+    }
+
+    &--NIEGOTOWY {
+      background: #b71c1c;
+    }
+  }
+}
+
+:host ::ng-deep .aed-cluster-label {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #0052a5;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 991.98px) {
+  .aed-map {
+    height: 45vh;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .aed-search__locate {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0;
+  }
+}

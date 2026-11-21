@@ -1,6 +1,7 @@
 import json
 
 import marshmallow as ma
+from django.apps import apps
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 
@@ -150,6 +151,8 @@ class ResourceApiAttrs(ObjectAttrs, HighlightObjectMixin):
     has_high_value_data_from_ec_list = fields.Boolean()
     has_research_data = fields.Boolean()
     contains_protected_data = fields.Boolean()
+    data_standard = fields.Str()
+    aed_validation = fields.Method("get_aed_validation")
     regions = fields.Method("get_regions")
     files = fields.Method("get_files")
     supplement_docs = fields.Nested(SupplementSchema, data_key="supplements", many=True)
@@ -167,6 +170,14 @@ class ResourceApiAttrs(ObjectAttrs, HighlightObjectMixin):
 
     def get_files(self, res):
         return ResourceFileSchema(many=True).dump(getattr(res, "all_files", res.files))
+
+    def get_aed_validation(self, res):
+        from mcod.aed.services import report_summary
+
+        if isinstance(res, apps.get_model("resources", "Resource")):
+            return report_summary(res)
+        value = getattr(res, "aed_validation", None)  # search index document
+        return value.to_dict() if hasattr(value, "to_dict") else value
 
 
 class ResourceApiAggregations(ExtSchema):

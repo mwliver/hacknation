@@ -234,3 +234,6 @@ HEALTH_CHECK = False
 # which is sufficient for tests and prevents the internal crash across all 3000+ tests.
 AXES_PROXY_COUNT = 0
 AXES_IPWARE_PROXY_COUNT = 0
+
+AED_ENABLED = True
+ELASTICSEARCH_INDEX_NAMES["aed"] = ELASTICSEARCH_INDEX_NAMES["resources"].replace("test-resources-", "test-aed-")

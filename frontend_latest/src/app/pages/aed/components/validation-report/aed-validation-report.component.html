@@ -1,0 +1,75 @@
+<section class="aed-report" aria-labelledby="aed-report-heading">
+  <h2 *ngIf="headingLevel() === 2" id="aed-report-heading" class="h4">{{ 'Aed.Report.Heading' | translate }}</h2>
+  <h3 *ngIf="headingLevel() === 3" id="aed-report-heading" class="h5">{{ 'Aed.Report.Heading' | translate }}</h3>
+
+  <!-- summary is announced to screen readers when a new report appears -->
+  <div
+    class="aed-report__summary"
+    [ngClass]="report().zgodny ? 'aed-report__summary--ok' : 'aed-report__summary--error'"
+    role="status"
+    aria-live="polite"
+    data-test="aed-report-summary">
+    <p class="aed-report__verdict mb-1">
+      <span aria-hidden="true">{{ report().zgodny ? '✔' : '✖' }}</span>
+      {{ (report().zgodny ? 'Aed.Report.Compliant' : 'Aed.Report.NotCompliant') | translate }}
+    </p>
+    <ul class="aed-report__counters list-unstyled mb-0">
+      <li>{{ 'Aed.Report.Rows' | translate }}: <strong>{{ report().liczba_wierszy }}</strong></li>
+      <li>{{ 'Aed.Report.Errors' | translate }}: <strong>{{ report().liczba_bledow }}</strong></li>
+      <li>{{ 'Aed.Report.Warnings' | translate }}: <strong>{{ report().liczba_ostrzezen }}</strong></li>
+    </ul>
+  </div>
+
+  <ng-container *ngIf="report().problemy.length">
+    <div class="aed-report__toolbar">
+      <fieldset class="aed-report__filter">
+        <legend class="aed-report__legend">{{ 'Aed.Report.Show' | translate }}</legend>
+        <div class="btn-group" role="group">
+          <button
+            *ngFor="let item of levels"
+            type="button"
+            class="btn btn-sm"
+            [ngClass]="level() === item ? 'btn-primary' : 'btn-outline-primary'"
+            [attr.aria-pressed]="level() === item"
+            [attr.data-test]="'aed-report-filter-' + item"
+            (click)="setLevel(item)">
+            {{ 'Aed.Report.Level.' + item | translate }}
+          </button>
+        </div>
+      </fieldset>
+      <button type="button" class="btn btn-sm btn-outline-secondary" data-test="aed-report-export" (click)="exportCsv()">
+        {{ 'Aed.Report.ExportCsv' | translate }}
+      </button>
+    </div>
+
+    <div class="table-responsive" tabindex="0" [attr.aria-label]="'Aed.Report.TableLabel' | translate">
+      <table class="table table-sm aed-report__table">
+        <caption class="visually-hidden">{{ 'Aed.Report.TableLabel' | translate }}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ 'Aed.Report.Level.Self' | translate }}</th>
+            <th scope="col">{{ 'Aed.Report.Row' | translate }}</th>
+            <th scope="col">{{ 'Aed.Report.Column' | translate }}</th>
+            <th scope="col">{{ 'Aed.Report.Message' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let issue of issues()" [attr.data-test]="'aed-issue-' + issue.kod">
+            <td>
+              <span class="aed-report__level" [ngClass]="issue.poziom === 'ERROR' ? 'aed-report__level--error' : 'aed-report__level--warning'">
+                <span aria-hidden="true">{{ issue.poziom === 'ERROR' ? '✖' : '!' }}</span>
+                {{ 'Aed.Report.Level.' + issue.poziom | translate }}
+              </span>
+            </td>
+            <td>{{ issue.wiersz ?? '—' }}</td>
+            <td><code *ngIf="issue.kolumna">{{ issue.kolumna }}</code><span *ngIf="!issue.kolumna">—</span></td>
+            <td>{{ message(issue) }} <span class="text-muted small">({{ issue.kod }})</span></td>
+          </tr>
+          <tr *ngIf="!issues().length">
+            <td colspan="4">{{ 'Aed.Report.NoIssuesForFilter' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</section>

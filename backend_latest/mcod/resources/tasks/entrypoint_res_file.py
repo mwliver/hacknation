@@ -8,6 +8,7 @@ from celery.states import SUCCESS
 from django.apps import apps
 from sentry_sdk import set_tag
 
+from mcod.aed.tasks import schedule_aed_validation
 from mcod.core.tasks import extended_shared_task
 from mcod.resources.tasks.common import (
     prepare_url_task_result_for_resource,
@@ -109,6 +110,11 @@ def entrypoint_process_resource_file_validation_task(
         ) as errors:
             _run_file_data_validation(resource)
         deferred_exceptions.extend(errors)
+
+    # 2a. AED v1 data standard validation – only for resources marked as AED v1 and with AED_ENABLED (mcod/aed)
+    if file_validation_succeeded:
+        with report_exceptions("Exception occurred during AED validation scheduling", suppress=True):
+            schedule_aed_validation(resource_id)
 
     # 3. Create url validation task with SUCCESS status for resource
     if update_link and file_validation_succeeded and not deferred_exceptions:

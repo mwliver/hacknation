@@ -114,6 +114,10 @@ STATUS_CHOICES = [("published", _("Published")), ("draft", _("Draft"))]
 logger = logging.getLogger("mcod")
 
 
+# Model data scopes ("wzorcowe zakresy danych"); see mcod/aed for the AED v1 standard.
+RESOURCE_DATA_STANDARD_CHOICES = (("AED_V1", _("AED v1 – defibrillators")),)
+
+
 class ResourceDataValidationError(Exception):
     pass
 
@@ -528,6 +532,14 @@ class Resource(ExtendedModel):
     has_high_value_data_from_ec_list = models.NullBooleanField(verbose_name=_("has high value data from the EC list"))
     has_map = models.BooleanField(verbose_name=_("has map?"), default=False)
     has_research_data = models.NullBooleanField(verbose_name=_("has research data"))
+    data_standard = models.CharField(
+        max_length=20,
+        choices=RESOURCE_DATA_STANDARD_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name=_("data standard"),
+        help_text=_("Model data scope the file follows. Files marked as AED v1 are additionally validated against the standard."),
+    )
     has_table = models.BooleanField(verbose_name=_("has table?"), default=False)
     is_chart_creation_blocked = models.BooleanField(verbose_name=_("is chart creation blocked?"), default=False)
     tabular_data_schema = JSONField(null=True, blank=True)
