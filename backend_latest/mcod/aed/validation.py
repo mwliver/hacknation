@@ -129,8 +129,10 @@ MESSAGES: Dict[str, Tuple[str, str, str]] = {
     ),
     "OUT_OF_POLAND": (
         ERROR,
-        "Współrzędna {value} jest poza Polską (dozwolony zakres {minimum}–{maximum}). Sprawdź, czy nie zamieniono szerokości z długością.",
-        "Coordinate {value} is outside Poland (allowed range {minimum}–{maximum}). Check that latitude and longitude are not swapped.",
+        "Współrzędna {value} jest poza Polską (dozwolony zakres {minimum}–{maximum}). "
+        "Sprawdź, czy nie zamieniono szerokości z długością.",
+        "Coordinate {value} is outside Poland (allowed range {minimum}–{maximum}). "
+        "Check that latitude and longitude are not swapped.",
     ),
     "ENUM_VALUE": (
         ERROR,
@@ -393,61 +395,74 @@ def _parse_date(value: str) -> Optional[date]:
         return None
 
 
+def _check_date(name, value, row, report, f, constraints):
+    parsed = _parse_date(value)
+    if parsed is None:
+        report.add("INVALID_DATE", row, name, value=_quote(value, name))
+    return parsed
+
+
+def _check_numeric(name, value, row, report, f, constraints):
+    is_number = f["type"] == "number"
+    pattern, code = (_NUMBER_RE, "INVALID_NUMBER") if is_number else (_INTEGER_RE, "INVALID_INTEGER")
+    if not pattern.match(value):
+        report.add(code, row, name, value=_quote(value, name))
+        return None
+    number = float(value) if is_number else int(value)
+    minimum, maximum = constraints.get("minimum"), constraints.get("maximum")
+    if (minimum is not None and number < minimum) or (maximum is not None and number > maximum):
+        code = "OUT_OF_POLAND" if name in ("szerokosc_geograficzna", "dlugosc_geograficzna") else "OUT_OF_RANGE"
+        report.add(code, row, name, value=_quote(value, name), minimum=minimum, maximum=maximum)
+        return None
+    return number
+
+
+def _check_boolean(name, value, row, report, f, constraints):
+    lowered = value.lower()
+    if lowered in f["trueValues"]:
+        return True
+    if lowered in f["falseValues"]:
+        return False
+    report.add("INVALID_BOOLEAN", row, name, value=_quote(value, name))
+    return None
+
+
+def _check_string(name, value, row, report, f, constraints):
+    if "enum" in constraints:
+        upper = value.upper()
+        if upper not in constraints["enum"]:
+            report.add("ENUM_VALUE", row, name, value=_quote(value, name), allowed=", ".join(constraints["enum"]))
+            return None
+        return upper
+    if name == "kod_pocztowy" and _POSTAL_DIGITS_RE.match(value):
+        normalized = "{}-{}".format(value[:2], value[2:])
+        report.add("POSTAL_CODE_FORMAT", row, name, value=_quote(value, name), normalized=normalized)
+        return normalized
+    if "pattern" in constraints and not re.match(constraints["pattern"], value):
+        expected_pl, expected_en = _PATTERN_DESCRIPTIONS.get(name, (constraints["pattern"], constraints["pattern"]))
+        report.add("INVALID_FORMAT", row, name, value=_quote(value, name), expected_pl=expected_pl, expected_en=expected_en)
+        return None
+    return value
+
+
+_TYPE_CHECKERS = {
+    "date": _check_date,
+    "number": _check_numeric,
+    "integer": _check_numeric,
+    "boolean": _check_boolean,
+    "string": _check_string,
+}
+
+
 def _check_value(name: str, value: str, row: int, report: ValidationReport):
     """Validates one non-empty cell. Returns the typed value or None when invalid."""
     f = schema.field(name)
     constraints = f.get("constraints", {})
-    quoted = _quote(value, name)
     max_length = constraints.get("maxLength")
     if max_length and len(value) > max_length:
         report.add("TOO_LONG", row, name, limit=max_length)
         return None
-
-    if f["type"] == "date":
-        parsed = _parse_date(value)
-        if parsed is None:
-            report.add("INVALID_DATE", row, name, value=quoted)
-        return parsed
-
-    if f["type"] in ("number", "integer"):
-        pattern, code = (_NUMBER_RE, "INVALID_NUMBER") if f["type"] == "number" else (_INTEGER_RE, "INVALID_INTEGER")
-        if not pattern.match(value):
-            report.add(code, row, name, value=quoted)
-            return None
-        number = float(value) if f["type"] == "number" else int(value)
-        minimum, maximum = constraints.get("minimum"), constraints.get("maximum")
-        if (minimum is not None and number < minimum) or (maximum is not None and number > maximum):
-            code = "OUT_OF_POLAND" if name in ("szerokosc_geograficzna", "dlugosc_geograficzna") else "OUT_OF_RANGE"
-            report.add(code, row, name, value=quoted, minimum=minimum, maximum=maximum)
-            return None
-        return number
-
-    if f["type"] == "boolean":
-        lowered = value.lower()
-        if lowered in f["trueValues"]:
-            return True
-        if lowered in f["falseValues"]:
-            return False
-        report.add("INVALID_BOOLEAN", row, name, value=quoted)
-        return None
-
-    if "enum" in constraints:
-        upper = value.upper()
-        if upper not in constraints["enum"]:
-            report.add("ENUM_VALUE", row, name, value=quoted, allowed=", ".join(constraints["enum"]))
-            return None
-        return upper
-
-    if name == "kod_pocztowy" and _POSTAL_DIGITS_RE.match(value):
-        normalized = "{}-{}".format(value[:2], value[2:])
-        report.add("POSTAL_CODE_FORMAT", row, name, value=quoted, normalized=normalized)
-        return normalized
-
-    if "pattern" in constraints and not re.match(constraints["pattern"], value):
-        expected_pl, expected_en = _PATTERN_DESCRIPTIONS.get(name, (constraints["pattern"], constraints["pattern"]))
-        report.add("INVALID_FORMAT", row, name, value=quoted, expected_pl=expected_pl, expected_en=expected_en)
-        return None
-    return value
+    return _TYPE_CHECKERS[f["type"]](name, value, row, report, f, constraints)
 
 
 def _check_row_rules(row_no: int, typed: Dict[str, object], raw: Dict[str, str], today: date, report: ValidationReport):
@@ -474,63 +489,71 @@ def _check_row_rules(row_no: int, typed: Dict[str, object], raw: Dict[str, str],
 # ---------------------------------------------------------------------------------------------------------------
 
 
+def _check_cells(row_no: int, raw: Dict[str, str], report: ValidationReport) -> Dict[str, object]:
+    typed: Dict[str, object] = {}
+    for name, value in raw.items():
+        if not value:
+            if schema.field(name)["x-aed-presence"] == schema.PRESENCE_REQUIRED:
+                report.add("REQUIRED_EMPTY", row_no, name)
+            continue
+        typed_value = _check_value(name, value, row_no, report)
+        if typed_value is not None:
+            typed[name] = typed_value
+    return typed
+
+
+class _RowsState:
+    def __init__(self):
+        self.seen_ids: Dict[str, int] = {}
+        self.points: List[Tuple[float, float]] = []
+        self.point_rows: List[int] = []
+
+
+def _validate_row(row_no: int, cells: List[str], header_len: int, positions, state: _RowsState, report, today):
+    if not any(c.strip() for c in cells):
+        report.add("EMPTY_ROW", row_no)
+        return
+    if len(cells) != header_len:
+        report.add("ROW_LENGTH", row_no, actual=len(cells), expected=header_len)
+        return
+    raw: Dict[str, str] = {name: cells[idx].strip() for idx, name in positions.items()}
+    typed = _check_cells(row_no, raw, report)
+
+    id_aed = raw.get("id_aed")
+    if id_aed and id_aed in state.seen_ids:
+        report.add("DUPLICATE_ID", row_no, "id_aed", value=_quote(id_aed), first_row=state.seen_ids[id_aed])
+    elif id_aed:
+        state.seen_ids[id_aed] = row_no
+
+    _check_row_rules(row_no, typed, raw, today, report)
+
+    lat, lon = typed.get("szerokosc_geograficzna"), typed.get("dlugosc_geograficzna")
+    if lat is not None and lon is not None:
+        state.points.append((lat, lon))
+        state.point_rows.append(row_no)
+    # normalized enums / postal codes replace raw strings
+    clean = {**raw, **{k: v for k, v in typed.items() if isinstance(v, str)}}
+    report.records.append((row_no, clean))
+
+
 def validate_rows(rows: List[List[str]], report: ValidationReport, today: date) -> ValidationReport:
     if not rows:
         report.add("EMPTY_FILE")
         return report
     header = rows[0]
     positions = _check_header(header, report)
-    seen_ids: Dict[str, int] = {}
-    points: List[Tuple[float, float]] = []
-    point_rows: List[int] = []
-
+    state = _RowsState()
     for offset, cells in enumerate(rows[1:]):
-        row_no = offset + 2
         report.rows += 1
-        if not any(c.strip() for c in cells):
-            report.add("EMPTY_ROW", row_no)
-            continue
-        if len(cells) != len(header):
-            report.add("ROW_LENGTH", row_no, actual=len(cells), expected=len(header))
-            continue
+        _validate_row(offset + 2, cells, len(header), positions, state, report, today)
 
-        raw: Dict[str, str] = {name: cells[idx].strip() for idx, name in positions.items()}
-        typed: Dict[str, object] = {}
-        for name, value in raw.items():
-            if not value:
-                if schema.field(name)["x-aed-presence"] == schema.PRESENCE_REQUIRED:
-                    report.add("REQUIRED_EMPTY", row_no, name)
-                continue
-            typed_value = _check_value(name, value, row_no, report)
-            if typed_value is not None:
-                typed[name] = typed_value
-
-        id_aed = raw.get("id_aed")
-        if id_aed:
-            if id_aed in seen_ids:
-                report.add("DUPLICATE_ID", row_no, "id_aed", value=_quote(id_aed), first_row=seen_ids[id_aed])
-            else:
-                seen_ids[id_aed] = row_no
-
-        _check_row_rules(row_no, typed, raw, today, report)
-
-        lat, lon = typed.get("szerokosc_geograficzna"), typed.get("dlugosc_geograficzna")
-        if lat is not None and lon is not None:
-            points.append((lat, lon))
-            point_rows.append(row_no)
-        clean = dict(raw)
-        for name, value in typed.items():
-            if isinstance(value, str):
-                clean[name] = value  # normalized enums / postal codes
-        report.records.append((row_no, clean))
-
-    for i, j, distance in close_pairs(points, NEAR_DUPLICATE_RADIUS_M):
+    for i, j, distance in close_pairs(state.points, NEAR_DUPLICATE_RADIUS_M):
         report.add(
             "NEAR_DUPLICATE_5M",
-            point_rows[j],
+            state.point_rows[j],
             "szerokosc_geograficzna",
             distance="{:.1f}".format(distance),
-            other_row=point_rows[i],
+            other_row=state.point_rows[i],
         )
     report.issues.sort(key=lambda i: (i.row or 0, i.level != ERROR))
     return report
