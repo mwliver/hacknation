@@ -1,9 +1,8 @@
-import { loginQuery } from '@/auth/auth.api';
+import { loginStore } from '@/auth/auth.api';
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { navigateTo } from '../../app/router';
 import { isSafeReturnTo } from '../../auth/auth.guard';
-import { when } from 'lit/directives/when.js';
 
 @customElement('login-page')
 export class LoginPage extends LitElement {
@@ -75,7 +74,7 @@ export class LoginPage extends LitElement {
   `;
 
   render() {
-    loginQuery.observe(this);
+    loginStore.observe(this);
 
     return html`
       <h1>Sign in</h1>
@@ -97,24 +96,11 @@ export class LoginPage extends LitElement {
           autocomplete="current-password"
           required
         ></wa-input>
-        ${when(
-          loginQuery.isError,
-          () => html`
-            <p class="error" role="alert">
-              ${
-                loginQuery.error instanceof Error
-                  ? loginQuery.error.message
-                  : 'Unable to sign in.'
-              }
-            </p>
-          `,
-        )}
         <wa-button
           type="submit"
           variant="brand"
-          ?disabled=${loginQuery.isLoading}
         >
-          ${loginQuery.isLoading ? 'Signing in…' : 'Sign in'}
+          ${'Sign in'}
         </wa-button>
       </form>
     `;
@@ -124,19 +110,15 @@ export class LoginPage extends LitElement {
     event.preventDefault();
     const form = event.currentTarget;
     if (!(form instanceof HTMLFormElement)) return;
-    if (loginQuery.isLoading) return;
     const data = new FormData(form);
 
-    try {
-      await loginQuery.call({
-        email: String(data.get('email') ?? ''),
-        password: String(data.get('password') ?? ''),
-      });
-    } catch {
-      // The mutation state exposes the error in the form.
-      return;
-    }
-    const returnTo = new URLSearchParams(window.location.search).get('returnTo');
+    const email = String(data.get('email') ?? '');
+    const password = String(data.get('password') ?? '');
+    loginStore.set({ email, password });
+
+    const returnTo = new URLSearchParams(window.location.search).get(
+      'returnTo',
+    );
     await navigateTo(isSafeReturnTo(returnTo) ? returnTo : '/dashboard');
   }
 }

@@ -1,7 +1,7 @@
 import 'urlpattern-polyfill';
 import { LitElement } from 'lit';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { clearSession, loginQuery } from '../auth/auth.api';
+import { clearSession, loginStore } from '../auth/auth.api';
 import { createApplicationRouter, navigateTo } from './router';
 
 class RouterTestHost extends LitElement {}
@@ -17,7 +17,7 @@ describe('application router authentication', () => {
     vi.useFakeTimers();
     window.history.replaceState({}, '', '/login');
     const router = createApplicationRouter(new RouterTestHost());
-    const login = loginQuery.call({
+    const login = loginStore.set({
       email: 'person@example.com',
       password: 'prototype-password',
     });

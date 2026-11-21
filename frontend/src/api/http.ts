@@ -1,6 +1,6 @@
-
 import { clearSession } from '../auth/auth.api';
 import { navigateTo } from '../app/router';
+import { appStorage } from '@/storage/app-storage';
 
 export class ApiError extends Error {
   constructor(
@@ -14,18 +14,23 @@ export class ApiError extends Error {
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
-export async function post<T>(
-  path: string,
-  body?: unknown,
-): Promise<T> {
+function buildHeaders(headers: HeadersInit = {}): Headers {
+  const result = new Headers(headers);
+  const creds = appStorage.credentials.get();
+  if (creds) {
+    const encoded = btoa(`${creds.email}:${creds.password}`);
+    result.set('Authorization', `Basic ${encoded}`);
+  }
+  return result;
+}
+
+export async function post<T>(path: string, body?: unknown): Promise<T> {
   let response: Response;
 
   try {
     response = await fetch(`${API_URL}${path}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: buildHeaders(),
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {

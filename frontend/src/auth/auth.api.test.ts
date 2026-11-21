@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { clearSession, loginQuery, signOut } from './auth.api';
+import { clearSession, loginStore } from './auth.api';
 
 describe('signOut', () => {
   afterEach(() => {
@@ -14,13 +14,13 @@ describe('signOut', () => {
     vi.stubGlobal('fetch', fetch);
 
     for (const email of ['first@example.com', 'second@example.com']) {
-      const login = loginQuery.call({ email, password: 'prototype-password' });
+      const login = loginStore.set({ email, password: 'prototype-password' });
       await vi.advanceTimersByTimeAsync(2000);
       await login;
 
-      expect(loginQuery.data?.email).toBe(email);
-      await signOut();
-      expect(loginQuery.data).toBeUndefined();
+      expect(loginStore.get()?.email).toBe(email);
+      await clearSession();
+      expect(loginStore.get()?.password).toBeUndefined();
     }
 
     expect(fetch).toHaveBeenCalledTimes(2);

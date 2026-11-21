@@ -6,7 +6,7 @@ import { createApplicationRouter } from './router';
 import '../components/layout/app-header';
 import '../components/layout/app-nav-drawer';
 import '../components/ui/web-components';
-import { loginQuery } from '../auth/auth.api';
+import { loginStore } from '../auth/auth.api';
 import { appStorage, type ThemePreference } from '../storage/app-storage';
 
 @customElement('app-shell')
@@ -82,8 +82,8 @@ export class AppShell extends QueryClientProvider {
   }
 
   render() {
-    loginQuery.observe(this);
-    const currentUser = loginQuery.data;
+    loginStore.observe(this);
+    const currentUser = loginStore.get()!;
     return html`
       <app-header>
         ${currentUser
@@ -95,7 +95,7 @@ export class AppShell extends QueryClientProvider {
         <nav aria-label="Main navigation">
           <wa-button
             size="s"
-            appearance="plain"
+            appearance="outlined"
             aria-label="Toggle color theme"
             title="Toggle color theme"
             @click=${this.toggleTheme}

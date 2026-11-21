@@ -4,7 +4,7 @@ import { delayResolve } from '@/utils/delay-resolve';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { navigateTo } from '../../app/router';
-import { loginQuery, signOut } from '../../auth/auth.api';
+import { loginStore, clearSession } from '../../auth/auth.api';
 
 const users: UserModel[] = [];
 const allUsers = createQuery(async () => users);
@@ -74,14 +74,14 @@ export class DashboardPage extends LitElement {
 
 
   render() {
-    loginQuery.observe(this)
+    loginStore.observe(this)
     allUsers.observe(this);
     createNewUser.observe(this);
-    const currentUser = loginQuery.data;
+    const currentUser = loginStore.get();
     return html`
       <h1>Dashboard${this.section ? `: ${this.section}` : ''}</h1>
       <p class="muted">
-        You are signed in as ${currentUser?.name}
+        You are signed in as ${currentUser?.email}
         (${currentUser?.email}).
       </p>
       <wa-button variant="brand" @click=${this.handleLogout}
@@ -125,7 +125,7 @@ export class DashboardPage extends LitElement {
   }
 
   private async handleLogout(): Promise<void> {
-    await signOut();
+    await clearSession();
     await navigateTo('/login');
   }
 

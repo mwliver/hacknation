@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { navigateTo } from '../../app/router';
-import { signOut } from '../../auth/auth.api';
+import { clearSession } from '../../auth/auth.api';
 import type { User } from '../../auth/auth.types';
 
 @customElement('app-nav-drawer')
@@ -47,11 +47,6 @@ export class AppNavDrawer extends LitElement {
       min-width: 0;
     }
 
-    .user-name {
-      font-weight: 700;
-      overflow-wrap: anywhere;
-    }
-
     .user-email {
       color: var(--app-color-text-muted);
       font-size: 0.875rem;
@@ -73,7 +68,7 @@ export class AppNavDrawer extends LitElement {
     return html`
       <wa-button
         size="s"
-        appearance="plain"
+        appearance="outlined"
         aria-label="Open navigation menu"
         title="Open navigation menu"
         @click=${this.openDrawer}
@@ -103,7 +98,6 @@ export class AppNavDrawer extends LitElement {
         </nav>
         <div slot="footer" class="footer">
           <div class="user-info">
-            <span class="user-name">${this.user?.name}</span>
             <span class="user-email">${this.user?.email}</span>
           </div>
           <wa-button
@@ -149,7 +143,7 @@ export class AppNavDrawer extends LitElement {
 
   private async handleLogout(): Promise<void> {
     this.open = false;
-    await signOut();
+    await clearSession();
     await navigateTo('/login');
   }
 }

@@ -1,7 +1,7 @@
 import { fixture, html } from '@open-wc/testing';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { navigateTo } from '../../app/router';
-import { loginQuery } from '../../auth/auth.api';
+import { loginStore } from '../../auth/auth.api';
 import './login.page';
 
 vi.mock('../../app/router', () => ({
@@ -10,7 +10,7 @@ vi.mock('../../app/router', () => ({
 
 describe('login page', () => {
   afterEach(() => {
-    loginQuery.reset();
+    loginStore.reset();
     vi.useRealTimers();
   });
 
@@ -26,7 +26,7 @@ describe('login page', () => {
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await vi.advanceTimersByTimeAsync(2000);
 
-    expect(loginQuery.data?.email).toBe('person@example.com');
+    expect(loginStore.get()?.email).toBe('person@example.com');
     expect(navigateTo).toHaveBeenCalledWith('/dashboard/reports');
   });
 });

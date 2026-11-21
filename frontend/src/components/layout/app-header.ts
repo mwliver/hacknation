@@ -61,7 +61,7 @@ export class AppHeader extends LitElement {
           <slot name="start"></slot>
           <wa-button
             size="s"
-            appearance="plain"
+            appearance="outlined"
             aria-label="Navigate to dashboard"
             href="/dashboard"
             >Hacknation 2026</wa-button

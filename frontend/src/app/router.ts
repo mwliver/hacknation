@@ -1,7 +1,7 @@
 import { Router } from '@lit-labs/router';
 import type { ReactiveControllerHost } from 'lit';
 import { html } from 'lit';
-import { loginQuery } from '../auth/auth.api';
+import { loginStore } from '../auth/auth.api';
 import {
   getCurrentReturnPath,
   requireAuthentication,
@@ -14,7 +14,7 @@ export function createApplicationRouter(
 ): Router {
   const protectedEnter = async (): Promise<boolean> =>
     requireAuthentication(
-      loginQuery.data !== undefined,
+      Boolean(loginStore.get()),
       navigateTo,
       getCurrentReturnPath(),
     );
