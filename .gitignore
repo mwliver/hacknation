@@ -49,3 +49,11 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+# Frontend
+frontend/node_modules
+frontend/dist
+frontend/coverage
+frontend/.env
+frontend/.DS_Store
+.vscode
