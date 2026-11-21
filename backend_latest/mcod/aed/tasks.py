@@ -38,3 +38,13 @@ def schedule_aed_validation(resource) -> bool:
         return False
     validate_aed_resource_task.apply_async_on_commit(args=(resource.pk,))
     return True
+
+
+@extended_shared_task(ignore_result=False, name="mcod.aed.tasks.build_aed_national_dataset_task")
+def build_aed_national_dataset_task():
+    """Periodic (django_celery_beat) build of the national AED dataset; no-op when AED_ENABLED is False."""
+    if not settings.AED_ENABLED:
+        return {"skipped": True}
+    from mcod.aed.national import build_national_dataset
+
+    return build_national_dataset().as_dict()

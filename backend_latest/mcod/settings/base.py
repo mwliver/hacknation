@@ -2369,5 +2369,8 @@ AED_MAX_ROWS = env.int("AED_MAX_ROWS", default=50_000)
 AED_VALIDATE_MAX_FILE_SIZE = env.int("AED_VALIDATE_MAX_FILE_SIZE", default=10 * 1024 * 1024)  # 10 MB
 AED_VALIDATE_RATE_LIMITS = env.str("AED_VALIDATE_RATE_LIMITS", default="10/minute, 200/day")
 AED_NATIONAL_ORGANIZATION_ID = env.int("AED_NATIONAL_ORGANIZATION_ID", default=None)
+if AED_ENABLED:
+    ELASTICSEARCH_INDEX_NAMES["aed"] = "aed"
 AED_RESOURCE_MAX_FILE_SIZE = env.int("AED_RESOURCE_MAX_FILE_SIZE", default=100 * 1024 * 1024)  # 100 MB
 CELERY_TASK_ROUTES["mcod.aed.tasks.validate_aed_resource_task"] = {"queue": "resources"}
+CELERY_TASK_ROUTES["mcod.aed.tasks.build_aed_national_dataset_task"] = {"queue": "periodic"}

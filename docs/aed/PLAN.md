@@ -181,7 +181,7 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 - [x] Faza 0 – eksploracja i plan (2026-11-21)
 - [x] Faza 1 – schemat v1, loader, generatory CSV/XLSX, `export_aed_standard` (2026-11-21)
 - [x] Faza 2 – flaga AED na zasobie, walidator, raport w adminie i API, `POST /aed/validate` (2026-11-21)
-- [ ] Faza 3
+- [x] Faza 3 – agregacja, deduplikacja, indeks `aed`, API `/aed`, `nearest`, `{id}`, `stats` (2026-11-21)
 - [ ] Faza 4
 - [ ] Faza 5
 
@@ -224,3 +224,22 @@ Przyjęte rekomendacje z sekcji 4: (1) klastrowanie po stronie serwera, bez `lea
 - Odstępstwo od planu: odznaka na poziomie zbioru będzie liczona we froncie z listy zasobów (API `datasets/{id}/resources` zwraca `data_standard` i `aed_validation`), bez nowego pola w dokumencie zbioru – mniej zmian w istniejących indeksach.
 - Testy: `mcod/aed` + regresja całego `mcod/resources`: 1115 passed, 1 skipped, 4 xfailed, 2 xpassed, 0 failed (41 min, -n3). Lint AED: OK.
 - Pamiętać: nowe pola w dokumencie ES `resources` wymagają `manage.py search_index --rebuild -f --models resources.Resource` na środowisku.
+
+### Faza 3 – co zrobiono (2026-11-21)
+- `mcod/aed/readiness.py` – `gotowosc` (NIEGOTOWY → NIEZNANY → WYMAGA_UWAGI → GOTOWY, Europe/Warsaw; data ważności = ważna do końca dnia; brak daty kontroli → NIEZNANY) i `otwarte_teraz`.
+- `mcod/aed/aggregation.py` – normalizacja, union-find: (1) ta sama para `zrodlo_danych`+`zrodlo_id`, (2) różne zasoby < 25 m + ta sama miejscowość (porównanie bez wielkości liter i polskich znaków) + ta sama ulica, jeśli obie znane (bez prefiksów „ul.”, „al.”…); scalanie wg priorytetu źródeł, remis → nowsza data; puste pola uzupełniane, ale pola tożsamości (`id_aed`, `dysponent`, `zrodlo_danych`, `zrodlo_id`) nigdy nie są mieszane.
+- Modele `AedRecord` (dane schematu w JSON + kolumny do zapytań) i `AedSourceLink` (`db_table = aed_source_link`), migracje `aed/0002`, `aed/0003` (PeriodicTask codziennie 03:30, kolejka `periodic`; zadanie nic nie robi przy `AED_ENABLED=False`).
+- `mcod/aed/national.py` – budowa: tylko zasoby AED v1 opublikowane, w opublikowanych zbiorach, z ostatnim raportem bez ERROR (plik walidowany ponownie przed użyciem); stabilne `id_aed_krajowe` między przebudowami; publikacja jako zwykły zbiór (instytucja `AED_NATIONAL_ORGANIZATION_ID`, kategoria `HEAL`, tagi AED/defibrylator/pierwsza pomoc, CC BY 4.0, `update_frequency=daily`), zasoby `aed_krajowy.csv`, `aed_krajowy.geojson`, `aed_powiazania_zrodel.csv` – podmiana głównego `ResourceFile` uruchamia standardowy pipeline portalu (podgląd, mapa, openness, ES, RDF).
+- ES 6.8 → klastry z `geohash_grid` + `geo_centroid` (`GET /aed?bbox=…&klastry=true&precyzja=1..12`, wynik w `meta.aggregations.klastry`). Indeks `aed` (`AedDocument`, `ignore_signals`, indeksowany po budowie). `gotowosc` filtrowana zapytaniem ES liczonym względem dzisiejszej daty; `otwarte_teraz` filtrowane w Pythonie na oknie 2000 wyników (ograniczenie).
+- Endpointy: `GET /aed` (filtry: `miejscowosc`, `kod_teryt_gminy` – prefiks, `status_urzadzenia`, `dostep_publiczny`, `otwarte_teraz`, `gotowosc`, `bbox`, `page`, `per_page`), `GET /aed/nearest` (`lat`, `lon`, `limit` ≤ 50, `max_km` ≤ 50, `include_unavailable`, + filtry), `GET /aed/{uuid}` (z `zrodla`), `GET /aed/stats`. NIESPRAWNY zawsze ukryty; `nearest` domyślnie pomija CZASOWO_NIEDOSTEPNY.
+- Atrybuty API generowane ze schematu (biała lista) – pola zakazane nie mogą się pojawić.
+- Komendy: `build_aed_national_dataset [--no-publish] [--no-index]`, `aed_demo_data [--no-build]` (fikcyjni dostawcy z `mcod/aed/tests/fixtures/providers`, generowani `node docs/aed/scripts/gen_provider_fixtures.mjs`: 13 wierszy → 10 rekordów).
+- Znalezisko: `TopLevel` z `aggs_schema` mutuje współdzielony `TopLevelMeta._declared_fields` – AED używa własnej podklasy `AedTopLevelMeta` (test regresyjny `test_clusters_survive_other_api_serializers`).
+- Testy AED: 213 passed; regresja `mcod/core` + `mcod/search`: 410 passed, 2 xfailed. Lint AED: OK.
+
+### Jak uruchomić zbiór krajowy lokalnie
+```
+AED_ENABLED=True python manage.py migrate
+AED_ENABLED=True python manage.py search_index --create --models aed.AedRecord
+AED_ENABLED=True python manage.py aed_demo_data          # wypisze AED_NATIONAL_ORGANIZATION_ID
+```

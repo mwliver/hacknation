@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -49,3 +51,61 @@ class AedValidationReport(models.Model):
 
     def as_dict(self) -> dict:
         return {**self.summary(), "problemy": self.issues}
+
+
+class AedRecord(models.Model):
+    """
+    One AED of the national dataset (after deduplication). Field values of the v1 schema are kept in ``data``
+    (the list of fields lives only in mcod/aed/schema/aed_v1.json); columns below are copies used for queries.
+    """
+
+    id_aed_krajowe = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    data = JSONField(default=dict, verbose_name=_("data"))
+    liczba_zrodel = models.PositiveSmallIntegerField(default=1, verbose_name=_("number of sources"))
+    miejscowosc = models.CharField(max_length=100, db_index=True, verbose_name=_("locality"))
+    kod_teryt_gminy = models.CharField(max_length=7, blank=True, db_index=True, verbose_name=_("TERYT code"))
+    status_urzadzenia = models.CharField(max_length=30, db_index=True, verbose_name=_("device status"))
+    dostep_publiczny = models.BooleanField(default=False, verbose_name=_("public access"))
+    szerokosc_geograficzna = models.FloatField(verbose_name=_("latitude"))
+    dlugosc_geograficzna = models.FloatField(verbose_name=_("longitude"))
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("AED (national dataset)")
+        verbose_name_plural = _("AEDs (national dataset)")
+        ordering = ("miejscowosc", "id_aed_krajowe")
+
+    def __str__(self):
+        return f"{self.data.get('nazwa_obiektu', '')} ({self.miejscowosc})"
+
+    def set_data(self, data: dict, sources_count: int) -> None:
+        self.data = data
+        self.liczba_zrodel = sources_count
+        self.miejscowosc = data.get("miejscowosc", "")[:100]
+        self.kod_teryt_gminy = data.get("kod_teryt_gminy", "")[:7]
+        self.status_urzadzenia = data.get("status_urzadzenia", "")
+        self.dostep_publiczny = data.get("dostep_publiczny") == "true"
+        self.szerokosc_geograficzna = float(data["szerokosc_geograficzna"])
+        self.dlugosc_geograficzna = float(data["dlugosc_geograficzna"])
+
+
+class AedSourceLink(models.Model):
+    """Where a national record comes from: one row per source row merged into the record."""
+
+    aed_record = models.ForeignKey(AedRecord, on_delete=models.CASCADE, related_name="source_links", db_column="id_aed_krajowe")
+    dysponent = models.CharField(max_length=300)
+    zrodlo_danych = models.CharField(max_length=20)
+    zrodlo_id = models.CharField(max_length=100, blank=True)
+    id_aed = models.CharField(max_length=100, verbose_name=_("identifier in the source file"))
+    resource = models.ForeignKey(
+        "resources.Resource", on_delete=models.SET_NULL, null=True, blank=True, related_name="aed_source_links"
+    )
+    is_primary = models.BooleanField(default=False, verbose_name=_("winning source"))
+
+    class Meta:
+        db_table = "aed_source_link"
+        verbose_name = _("AED source link")
+        verbose_name_plural = _("AED source links")
+        ordering = ("-is_primary", "id")
+        indexes = [models.Index(fields=["resource", "id_aed"])]
