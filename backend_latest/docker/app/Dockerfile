@@ -28,7 +28,8 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y --a
 
 # eMudhra emSign CA incident - see the script for details
 COPY ./docker/distrust-emudhra-roots.sh /usr/local/bin/distrust-emudhra-roots
-RUN distrust-emudhra-roots
+RUN chmod +x /usr/local/bin/distrust-emudhra-roots \
+    && distrust-emudhra-roots
 
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 
@@ -77,6 +78,12 @@ RUN chmod +x /usr/local/bin/start-celery-local
 
 # TODO: limit the context here to only the required paths
 ADD . /usr/src/mcod_backend
+
+# Create logs directory required by Django logging configuration
+RUN mkdir -p /usr/src/mcod_backend/logs
+
+# Compile translations and cleanup pyc files afterwards
+RUN python manage.py compilemessages --settings mcod.settings.test -v 3
 
 # Compile translations and cleanup pyc files afterwards
 RUN python manage.py compilemessages --settings mcod.settings.test -v 3

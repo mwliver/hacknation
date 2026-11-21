@@ -29,7 +29,8 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y --a
 
 # eMudhra emSign CA incident - see the script for details
 COPY ./docker/distrust-emudhra-roots.sh /usr/local/bin/distrust-emudhra-roots
-RUN distrust-emudhra-roots
+RUN chmod +x /usr/local/bin/distrust-emudhra-roots \
+    && distrust-emudhra-roots
 
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 
