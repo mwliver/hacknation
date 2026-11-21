@@ -56,3 +56,4 @@ frontend/dist
 frontend/coverage
 frontend/.env
 frontend/.DS_Store
+.vscode
