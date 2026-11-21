@@ -1,41 +1,16 @@
-/**
- * DataStore
- *
- * A small, shared container for synchronously stored data.
- *
- * Usage:
- *   const usersStore = createStore<User[]>([]);
- *
- *   // In render():
- *   usersStore.observe(this);
- *   const users = usersStore.get();
- *   return html`${users}`;
- *
- * Rules:
- * - get() returns the currently stored data.
- * - set(data) updates the stored data and notifies observers.
- * - observe(target) registers a one-time notification on the next set().
- *   After notification, the observer list is cleared.
- * - Call observe(this) when rendering a component. No manual registration
- *   or cleanup in the LitElement lifecycle is required.
- * - Observers are stored using WeakRef, so the store does not keep components
- *   alive. Dead references and duplicates are removed on the next observe().
- * - Every set() triggers notifications, even when the new value is identical
- *   to the previous value.
- *
- * Requirements: an environment supporting WeakRef (ES2021+).
- */
 
 export type RequestUpdateTarget = {
   requestUpdate: () => void;
 };
 
+export type StoreListener<T> = (data: T) => void;
+
 class DataStore<T> {
   #data: T;
+  #initialData: T;
 
   #observers = new Set<WeakRef<RequestUpdateTarget>>();
-
-  #initialData: T;
+  #listeners = new Set<StoreListener<T>>();
 
   constructor(initialData: T) {
     this.#initialData = initialData;
@@ -59,6 +34,10 @@ class DataStore<T> {
     for (const observer of observers) {
       observer.deref()?.requestUpdate();
     }
+
+    for (const listener of this.#listeners) {
+      listener(this.#data);
+    }
   }
 
   observe(target: RequestUpdateTarget): void {
@@ -71,6 +50,14 @@ class DataStore<T> {
     }
 
     this.#observers.add(new WeakRef(target));
+  }
+
+  register(listener: StoreListener<T>): void {
+    this.#listeners.add(listener);
+  }
+
+  unregister(listener: StoreListener<T>): void {
+    this.#listeners.delete(listener);
   }
 }
 

@@ -53,6 +53,17 @@ export class AppNavDrawer extends LitElement {
       overflow-wrap: anywhere;
     }
 
+    .user-id {
+      color: var(--app-color-text-muted);
+      font-size: 0.75rem;
+      overflow-wrap: anywhere;
+    }
+
+    .user-name {
+      color: var(--app-color-text-muted);
+      overflow-wrap: anywhere;
+    }
+
     wa-button {
       min-height: 2.75rem;
     }
@@ -98,7 +109,9 @@ export class AppNavDrawer extends LitElement {
         </nav>
         <div slot="footer" class="footer">
           <div class="user-info">
-            <span class="user-email">${this.user?.email}</span>
+            <span class="user-name"> ${this.user?.firstName} ${this.user?.lastName} </span>
+            <span class="user-id"> (${this.user?.credentialId}) </span>
+            <span class="user-email"> ${this.user?.email} </span>
           </div>
           <wa-button
             appearance="outlined"
