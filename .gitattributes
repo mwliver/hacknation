@@ -1,2 +1,3 @@
 docs/aed/*.csv -text
 docs/aed/scripts/*.sh text eol=lf
+backend_latest/mcod/aed/tests/fixtures/**/*.csv -text

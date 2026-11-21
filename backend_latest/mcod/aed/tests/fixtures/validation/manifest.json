@@ -1,0 +1,77 @@
+{
+  "valid.csv": [],
+  "missing_column.csv": [
+    "MISSING_COLUMN"
+  ],
+  "forbidden_column.csv": [
+    "FORBIDDEN_COLUMN"
+  ],
+  "row_length.csv": [
+    "ROW_LENGTH"
+  ],
+  "required_empty.csv": [
+    "REQUIRED_EMPTY"
+  ],
+  "invalid_date.csv": [
+    "INVALID_DATE"
+  ],
+  "invalid_number.csv": [
+    "INVALID_NUMBER"
+  ],
+  "invalid_boolean.csv": [
+    "INVALID_BOOLEAN"
+  ],
+  "enum_value.csv": [
+    "ENUM_VALUE"
+  ],
+  "out_of_poland.csv": [
+    "OUT_OF_POLAND",
+    "OUT_OF_POLAND"
+  ],
+  "duplicate_id.csv": [
+    "DUPLICATE_ID"
+  ],
+  "future_update_date.csv": [
+    "FUTURE_UPDATE_DATE"
+  ],
+  "encoding.csv": [
+    "ENCODING"
+  ],
+  "invalid_format.csv": [
+    "INVALID_FORMAT"
+  ],
+  "empty_row.csv": [
+    "EMPTY_ROW"
+  ],
+  "empty_column_header.csv": [
+    "EMPTY_COLUMN_HEADER"
+  ],
+  "delimiter.csv": [
+    "DELIMITER",
+    "MISSING_COLUMN"
+  ],
+  "unknown_column.csv": [
+    "UNKNOWN_COLUMN"
+  ],
+  "opening_hours_unsupported.csv": [
+    "OPENING_HOURS_UNSUPPORTED"
+  ],
+  "electrodes_expired.csv": [
+    "ELECTRODES_EXPIRED"
+  ],
+  "battery_expired.csv": [
+    "BATTERY_EXPIRED"
+  ],
+  "stale_update.csv": [
+    "STALE_UPDATE"
+  ],
+  "near_duplicate_5m.csv": [
+    "NEAR_DUPLICATE_5M"
+  ],
+  "utf8_bom.csv": [
+    "UTF8_BOM"
+  ],
+  "postal_code_format.csv": [
+    "POSTAL_CODE_FORMAT"
+  ]
+}
