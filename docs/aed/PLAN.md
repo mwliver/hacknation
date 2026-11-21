@@ -213,3 +213,13 @@ Przyjęte rekomendacje z sekcji 4: (1) klastrowanie po stronie serwera, bez `lea
 
 ### Następny krok: Faza 2
 `Resource.data_standard` (migracja + form/admin/ES/serializery), tag AED, `opening_hours.py`, `validation.py` + fixtures po jednym na regułę, `AedValidationReport`, zadanie Celery i wpięcie w pipeline, zakładka w adminie, endpointy `validate`, `schema`, `template.*`, `reports/{id}`, `config`.
+
+### Faza 2 – co zrobiono (2026-11-21)
+- `mcod/aed/validation.py` (czysta funkcja `validate_file`), `opening_hours.py` (podzbiór + święta PL), `geo.py` (haversine, pary bliskich punktów na siatce).
+- Reguły ERROR: `UNSUPPORTED_FILE, FILE_TOO_LARGE, UNREADABLE_FILE, EMPTY_FILE, ENCODING, DELIMITER, TOO_MANY_ROWS, EMPTY_COLUMN_HEADER, DUPLICATE_COLUMN, FORBIDDEN_COLUMN, MISSING_COLUMN, EMPTY_ROW, ROW_LENGTH, REQUIRED_EMPTY, INVALID_DATE, INVALID_NUMBER, INVALID_INTEGER, INVALID_BOOLEAN, INVALID_FORMAT, TOO_LONG, OUT_OF_RANGE, OUT_OF_POLAND, ENUM_VALUE, DUPLICATE_ID, FUTURE_UPDATE_DATE`; WARNING: `UTF8_BOM, UNKNOWN_COLUMN, STALE_UPDATE, OPENING_HOURS_UNSUPPORTED, ELECTRODES_EXPIRED, BATTERY_EXPIRED, NEAR_DUPLICATE_5M, POSTAL_CODE_FORMAT`.
+- Doprecyzowania: słowniki i booleany akceptowane bez względu na wielkość liter (normalizowane); kod pocztowy `NNNNN` → WARNING i zapis `NN-NNN`; numer wiersza = numer linii pliku (nagłówek = 1).
+- Fixtures: `mcod/aed/tests/fixtures/validation/*.csv` + `manifest.json`, generowane `node docs/aed/scripts/gen_validation_fixtures.mjs`.
+- Integracja z portalem: `Resource.data_standard` (migracja `resources/0076`), `AedValidationReport` (`aed/0001`), `mcod.aed.tasks.validate_aed_resource_task` (kolejka `resources`), krok 2a w `entrypoint_process_resource_file_validation_task`, sygnał post_save (tag „AED” pl/en na zbiorze + walidacja po zmianie standardu), admin: pole „Standard danych” + zakładka „AED v1 standard” z raportem, ES `resources`: `data_standard`, `aed_validation`; API zasobu: `data_standard`, `aed_validation`; filtr `data_standard` w `/resources`.
+- Endpointy (tylko przy `AED_ENABLED`): `/aed/schema`, `/aed/template.csv`, `/aed/template.xlsx` (`?przyklady=true`), `POST /aed/validate` (multipart `file`, CSV/XLSX, 10 MB, rate limiter, nic nie zapisuje), `/aed/reports/{resource_id}`, `/aed/config`.
+- Odstępstwo od planu: odznaka na poziomie zbioru będzie liczona we froncie z listy zasobów (API `datasets/{id}/resources` zwraca `data_standard` i `aed_validation`), bez nowego pola w dokumencie zbioru – mniej zmian w istniejących indeksach.
+- Pamiętać: nowe pola w dokumencie ES `resources` wymagają `manage.py search_index --rebuild -f --models resources.Resource` na środowisku.

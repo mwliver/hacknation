@@ -46,6 +46,11 @@ MESSAGES: Dict[str, Tuple[str, str, str]] = {
         "Nieobsługiwany typ pliku. Dozwolone: CSV (UTF-8) lub XLSX bez makr.",
         "Unsupported file type. Allowed: CSV (UTF-8) or XLSX without macros.",
     ),
+    "FILE_TOO_LARGE": (
+        ERROR,
+        "Plik jest za duży do walidacji standardu AED (maks. {limit_mb} MB).",
+        "The file is too large for AED standard validation (max {limit_mb} MB).",
+    ),
     "UNREADABLE_FILE": (ERROR, "Nie udało się odczytać pliku: {detail}.", "The file could not be read: {detail}."),
     "EMPTY_FILE": (ERROR, "Plik jest pusty – brak wiersza nagłówka.", "The file is empty – no header row."),
     "ENCODING": (

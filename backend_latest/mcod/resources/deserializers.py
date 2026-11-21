@@ -191,6 +191,12 @@ class ResourceApiSearchRequest(ListingSchema):
         doc_base_url="/resources",
         doc_field_name="language",
     )
+    data_standard = search_fields.FilterField(
+        StringTermSchema,
+        doc_template="docs/generic/fields/string_term_field.html",
+        doc_base_url="/resources",
+        doc_field_name="data_standard",
+    )
 
     class Meta:
         strict = True

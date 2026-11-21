@@ -74,6 +74,7 @@ def test_every_rule_has_a_fixture_or_dedicated_test():
     covered = {code for codes in MANIFEST.values() for code in codes}
     dedicated = {
         "UNSUPPORTED_FILE",
+        "FILE_TOO_LARGE",
         "UNREADABLE_FILE",
         "EMPTY_FILE",
         "TOO_MANY_ROWS",
