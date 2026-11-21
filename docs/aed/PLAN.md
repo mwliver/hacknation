@@ -180,7 +180,7 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 
 - [x] Faza 0 – eksploracja i plan (2026-11-21)
 - [x] Faza 1 – schemat v1, loader, generatory CSV/XLSX, `export_aed_standard` (2026-11-21)
-- [ ] Faza 2
+- [x] Faza 2 – flaga AED na zasobie, walidator, raport w adminie i API, `POST /aed/validate` (2026-11-21)
 - [ ] Faza 3
 - [ ] Faza 4
 - [ ] Faza 5
@@ -222,4 +222,5 @@ Przyjęte rekomendacje z sekcji 4: (1) klastrowanie po stronie serwera, bez `lea
 - Integracja z portalem: `Resource.data_standard` (migracja `resources/0076`), `AedValidationReport` (`aed/0001`), `mcod.aed.tasks.validate_aed_resource_task` (kolejka `resources`), krok 2a w `entrypoint_process_resource_file_validation_task`, sygnał post_save (tag „AED” pl/en na zbiorze + walidacja po zmianie standardu), admin: pole „Standard danych” + zakładka „AED v1 standard” z raportem, ES `resources`: `data_standard`, `aed_validation`; API zasobu: `data_standard`, `aed_validation`; filtr `data_standard` w `/resources`.
 - Endpointy (tylko przy `AED_ENABLED`): `/aed/schema`, `/aed/template.csv`, `/aed/template.xlsx` (`?przyklady=true`), `POST /aed/validate` (multipart `file`, CSV/XLSX, 10 MB, rate limiter, nic nie zapisuje), `/aed/reports/{resource_id}`, `/aed/config`.
 - Odstępstwo od planu: odznaka na poziomie zbioru będzie liczona we froncie z listy zasobów (API `datasets/{id}/resources` zwraca `data_standard` i `aed_validation`), bez nowego pola w dokumencie zbioru – mniej zmian w istniejących indeksach.
+- Testy: `mcod/aed` + regresja całego `mcod/resources`: 1115 passed, 1 skipped, 4 xfailed, 2 xpassed, 0 failed (41 min, -n3). Lint AED: OK.
 - Pamiętać: nowe pola w dokumencie ES `resources` wymagają `manage.py search_index --rebuild -f --models resources.Resource` na środowisku.
