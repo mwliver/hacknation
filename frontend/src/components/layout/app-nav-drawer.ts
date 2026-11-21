@@ -2,7 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { navigateTo } from '../../app/router';
 import { clearSession } from '../../auth/auth.api';
-import type { User } from '../../auth/auth.types';
+import type { User } from '@/auth/auth.types';
 
 @customElement('app-nav-drawer')
 export class AppNavDrawer extends LitElement {

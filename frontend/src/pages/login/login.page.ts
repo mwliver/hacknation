@@ -3,6 +3,10 @@ import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { navigateTo } from '../../app/router';
 import { isSafeReturnTo } from '../../auth/auth.guard';
+import { createQuery } from '@/api/endpoints/create-query';
+import { delayResolve } from '@/utils/delay-resolve';
+import type { LoginCredential, User } from '@/auth/auth.types';
+import { users } from '@/auth/auth.mocks';
 
 @customElement('login-page')
 export class LoginPage extends LitElement {
@@ -75,6 +79,7 @@ export class LoginPage extends LitElement {
 
   render() {
     loginStore.observe(this);
+    dummyLogin.observe(this);
 
     return html`
       <h1>Sign in</h1>
@@ -99,8 +104,9 @@ export class LoginPage extends LitElement {
         <wa-button
           type="submit"
           variant="brand"
+          .disabled=${dummyLogin.isLoading}
         >
-          ${'Sign in'}
+          ${dummyLogin.isLoading ? 'Signing in' : 'Sign in'}
         </wa-button>
       </form>
     `;
@@ -114,7 +120,12 @@ export class LoginPage extends LitElement {
 
     const email = String(data.get('email') ?? '');
     const password = String(data.get('password') ?? '');
-    loginStore.set({ email, password });
+
+    const user = await dummyLogin.call({ email, password });
+
+    if (!user) return;
+
+    loginStore.set(user);
 
     const returnTo = new URLSearchParams(window.location.search).get(
       'returnTo',
@@ -122,3 +133,16 @@ export class LoginPage extends LitElement {
     await navigateTo(isSafeReturnTo(returnTo) ? returnTo : '/dashboard');
   }
 }
+
+export const findUser = ({
+  email,
+  password,
+}: LoginCredential): User | undefined => {
+  return users.find(
+    (user) => user.email === email && user.password === password,
+  );
+};
+
+const dummyLogin = createQuery((user: LoginCredential) =>
+  delayResolve(500, findUser(user)),
+);

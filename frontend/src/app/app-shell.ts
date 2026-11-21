@@ -1,13 +1,12 @@
 import { QueryClientProvider } from '@tanstack/lit-query';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { queryClient } from './query-client';
-import { createApplicationRouter } from './router';
+import { loginStore } from '../auth/auth.api';
 import '../components/layout/app-header';
 import '../components/layout/app-nav-drawer';
 import '../components/ui/web-components';
-import { loginStore } from '../auth/auth.api';
 import { appStorage, type ThemePreference } from '../storage/app-storage';
+import { createApplicationRouter } from './router';
 
 @customElement('app-shell')
 export class AppShell extends QueryClientProvider {
@@ -54,7 +53,6 @@ export class AppShell extends QueryClientProvider {
 
   constructor() {
     super();
-    this.client = queryClient;
   }
 
   connectedCallback(): void {
