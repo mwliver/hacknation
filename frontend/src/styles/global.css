@@ -1,0 +1,53 @@
+@import '@awesome.me/webawesome/dist/styles/webawesome.css';
+@import './theme.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+  background: var(--app-color-background);
+  color: var(--app-color-text);
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size);
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: var(--app-color-primary);
+}
+
+:where(a, button, wa-button, wa-input):focus-visible {
+  outline: var(--wa-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (max-width: 40rem) {
+  html,
+  body {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

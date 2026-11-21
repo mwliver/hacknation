@@ -1,0 +1,79 @@
+:root,
+:host {
+  color-scheme: light;
+  --app-color-primary: #3157d5;
+  --app-color-secondary: #64748b;
+  --app-color-neutral: #334155;
+  --app-color-background: #f5f7fb;
+  --app-color-surface: #ffffff;
+  --app-color-text: #172033;
+  --app-color-text-muted: #61708a;
+  --app-color-border: #dce3ee;
+  --app-color-success: #16834a;
+  --app-color-warning: #a45b08;
+  --app-color-error: #c33434;
+  --app-color-information: #1769aa;
+  --app-focus-ring: 0 0 0 3px rgb(49 87 213 / 28%);
+  --app-font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --app-font-size: 1rem;
+  --app-space-1: 0.25rem;
+  --app-space-2: 0.5rem;
+  --app-space-3: 0.75rem;
+  --app-space-4: 1rem;
+  --app-space-6: 1.5rem;
+  --app-space-8: 2rem;
+  --app-radius-sm: 0.375rem;
+  --app-radius-md: 0.75rem;
+  --app-radius-lg: 1rem;
+  --wa-color-brand-fill-loud: var(--app-color-primary);
+  --wa-color-brand-on-loud: #ffffff;
+  --wa-color-focus: var(--app-color-primary);
+  --wa-form-control-background-color: var(--app-color-surface);
+  --wa-form-control-border-color: #68758a;
+  --wa-form-control-activated-color: var(--app-color-primary);
+  --wa-form-control-label-color: var(--app-color-text);
+  --wa-form-control-value-color: var(--app-color-text);
+  --wa-form-control-placeholder-color: var(--app-color-text-muted);
+  --wa-form-control-hint-color: var(--app-color-text-muted);
+  --wa-focus-ring: var(--app-focus-ring);
+}
+
+:root[data-theme='dark'],
+:host([data-theme='dark']) {
+  color-scheme: dark;
+  --app-color-background: #111827;
+  --app-color-surface: #1f2937;
+  --app-color-text: #f3f4f6;
+  --app-color-border: #3b4658;
+  --app-color-secondary: #aab4c3;
+  --app-color-neutral: #cbd5e1;
+  --app-color-text-muted: #c2ccda;
+  --app-color-success: #6ee7a1;
+  --app-color-warning: #ffd166;
+  --app-color-error: #ff8585;
+  --app-color-information: #79c4ff;
+  --app-focus-ring: 0 0 0 3px rgb(147 180 255 / 45%);
+  --wa-color-surface-default: var(--app-color-background);
+  --wa-color-surface-raised: var(--app-color-surface);
+  --wa-color-text-normal: var(--app-color-text);
+  --wa-color-text-quiet: var(--app-color-text-muted);
+  --wa-color-text-link: #a8c0ff;
+  --wa-color-neutral-border-normal: #8794a7;
+  --wa-color-neutral-border-loud: #aab7ca;
+  --wa-color-focus: #a8c0ff;
+  --wa-color-danger-fill-quiet: #492b36;
+  --wa-color-danger-fill-normal: #61303a;
+  --wa-color-danger-on-quiet: #ffaaaa;
+  --wa-color-danger-on-normal: #ffaaaa;
+  --wa-form-control-background-color: #111827;
+  --wa-form-control-border-color: #8794a7;
+  --wa-form-control-activated-color: #a8c0ff;
+  --wa-form-control-label-color: #f3f4f6;
+  --wa-form-control-value-color: #f9fafb;
+  --wa-form-control-placeholder-color: #c2ccda;
+  --wa-form-control-hint-color: #c2ccda;
+  --wa-color-brand-fill-loud: #3157d5;
+  --wa-color-brand-on-loud: #ffffff;
+}
