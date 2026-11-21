@@ -1,0 +1,419 @@
+{
+  "name": "aed_v1",
+  "title": {
+    "pl": "Wzorcowy zakres danych o defibrylatorach AED, wersja 1",
+    "en": "Model data scope for AED defibrillators, version 1"
+  },
+  "description": {
+    "pl": "Jeden wiersz opisuje jeden defibrylator AED. Schemat w formacie Frictionless Table Schema z rozszerzeniami x-aed-*.",
+    "en": "One row describes one AED defibrillator. Frictionless Table Schema with x-aed-* extensions."
+  },
+  "version": "1.0",
+  "missingValues": [""],
+  "primaryKey": "id_aed",
+  "fields": [
+    {
+      "name": "id_aed",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Identyfikator AED", "en": "AED identifier"},
+      "description": {
+        "pl": "UUID lub identyfikator nadany przez dysponenta. Unikalny w pliku.",
+        "en": "UUID or identifier assigned by the data holder. Unique within the file."
+      },
+      "example": "OTW-0001",
+      "constraints": {"required": true, "unique": true, "maxLength": 100}
+    },
+    {
+      "name": "dysponent",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Dysponent danych", "en": "Data holder"},
+      "description": {
+        "pl": "Nazwa podmiotu odpowiedzialnego za dane (nie osoba prywatna).",
+        "en": "Name of the organisation responsible for the data (not a private person)."
+      },
+      "example": "Urząd Miasta Testowego",
+      "constraints": {"required": true, "maxLength": 300}
+    },
+    {
+      "name": "zrodlo_danych",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Źródło danych", "en": "Data source"},
+      "description": {
+        "pl": "Zakres i pochodzenie źródła danych.",
+        "en": "Scope and origin of the data source."
+      },
+      "example": "JST",
+      "constraints": {"required": true, "enum": ["WLASCICIEL", "JST", "OSM", "APLIKACJA", "INNE"]},
+      "x-aed-enum-labels": {
+        "WLASCICIEL": {"pl": "Właściciel lub zarządca urządzenia", "en": "Device owner or operator"},
+        "JST": {"pl": "Jednostka samorządu terytorialnego", "en": "Local government unit"},
+        "OSM": {"pl": "OpenStreetMap", "en": "OpenStreetMap"},
+        "APLIKACJA": {"pl": "Aplikacja lub serwis zbierający zgłoszenia", "en": "Application or crowdsourcing service"},
+        "INNE": {"pl": "Inne źródło", "en": "Other source"}
+      }
+    },
+    {
+      "name": "zrodlo_id",
+      "type": "string",
+      "x-aed-presence": "if_known",
+      "title": {"pl": "Identyfikator w źródle", "en": "Source identifier"},
+      "description": {
+        "pl": "Identyfikator rekordu w systemie źródłowym, np. węzeł OSM node/123456.",
+        "en": "Record identifier in the source system, e.g. OSM node/123456."
+      },
+      "example": "node/100000001",
+      "constraints": {"required": false, "maxLength": 100}
+    },
+    {
+      "name": "data_aktualizacji",
+      "type": "date",
+      "format": "default",
+      "x-aed-presence": "required",
+      "title": {"pl": "Data aktualizacji rekordu", "en": "Record update date"},
+      "description": {
+        "pl": "Data ostatniej aktualizacji danych o urządzeniu w formacie RRRR-MM-DD. Nie może być z przyszłości.",
+        "en": "Date of the last update of the device data, YYYY-MM-DD. Must not be in the future."
+      },
+      "example": "2026-10-01",
+      "constraints": {"required": true}
+    },
+    {
+      "name": "status_weryfikacji",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Status weryfikacji", "en": "Verification status"},
+      "description": {
+        "pl": "Czy dysponent potwierdził na miejscu istnienie i lokalizację urządzenia.",
+        "en": "Whether the data holder confirmed the device and its location on site."
+      },
+      "example": "ZWERYFIKOWANY",
+      "constraints": {"required": true, "enum": ["ZWERYFIKOWANY", "NIEZWERYFIKOWANY", "WATPLIWY"]},
+      "x-aed-enum-labels": {
+        "ZWERYFIKOWANY": {"pl": "Zweryfikowany na miejscu", "en": "Verified on site"},
+        "NIEZWERYFIKOWANY": {"pl": "Niezweryfikowany", "en": "Not verified"},
+        "WATPLIWY": {"pl": "Wątpliwy – zgłoszono rozbieżności", "en": "Doubtful – discrepancies reported"}
+      }
+    },
+    {
+      "name": "nazwa_obiektu",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Nazwa obiektu", "en": "Facility name"},
+      "description": {
+        "pl": "Nazwa obiektu, w którym jest AED, zrozumiała dla dyspozytora.",
+        "en": "Name of the facility where the AED is located, understandable for a dispatcher."
+      },
+      "example": "Dworzec Testowy",
+      "constraints": {"required": true, "maxLength": 300}
+    },
+    {
+      "name": "miejscowosc",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Miejscowość", "en": "Locality"},
+      "description": {"pl": "Nazwa miejscowości.", "en": "Name of the locality."},
+      "example": "Otwock",
+      "constraints": {"required": true, "maxLength": 100}
+    },
+    {
+      "name": "ulica",
+      "type": "string",
+      "x-aed-presence": "if_known",
+      "title": {"pl": "Ulica", "en": "Street"},
+      "description": {
+        "pl": "Nazwa ulicy lub placu, bez numeru budynku.",
+        "en": "Street or square name, without the building number."
+      },
+      "example": "ul. Testowa",
+      "constraints": {"required": false, "maxLength": 200}
+    },
+    {
+      "name": "nr_budynku",
+      "type": "string",
+      "x-aed-presence": "if_known",
+      "title": {"pl": "Numer budynku", "en": "Building number"},
+      "description": {"pl": "Numer budynku (np. 12A).", "en": "Building number (e.g. 12A)."},
+      "example": "1",
+      "constraints": {"required": false, "maxLength": 20}
+    },
+    {
+      "name": "kod_pocztowy",
+      "type": "string",
+      "x-aed-presence": "if_known",
+      "title": {"pl": "Kod pocztowy", "en": "Postal code"},
+      "description": {"pl": "Kod pocztowy w formacie NN-NNN.", "en": "Postal code in NN-NNN format."},
+      "example": "05-400",
+      "constraints": {"required": false, "pattern": "^[0-9]{2}-[0-9]{3}$"}
+    },
+    {
+      "name": "szerokosc_geograficzna",
+      "type": "number",
+      "x-aed-presence": "required",
+      "title": {"pl": "Szerokość geograficzna", "en": "Latitude"},
+      "description": {
+        "pl": "Szerokość geograficzna WGS84 w stopniach dziesiętnych, kropka dziesiętna. Zakres dla Polski 49.0–54.9.",
+        "en": "WGS84 latitude in decimal degrees, dot as decimal separator. Poland range 49.0–54.9."
+      },
+      "example": "52.1050",
+      "constraints": {"required": true, "minimum": 49.0, "maximum": 54.9}
+    },
+    {
+      "name": "dlugosc_geograficzna",
+      "type": "number",
+      "x-aed-presence": "required",
+      "title": {"pl": "Długość geograficzna", "en": "Longitude"},
+      "description": {
+        "pl": "Długość geograficzna WGS84 w stopniach dziesiętnych, kropka dziesiętna. Zakres dla Polski 14.1–24.2.",
+        "en": "WGS84 longitude in decimal degrees, dot as decimal separator. Poland range 14.1–24.2."
+      },
+      "example": "21.2600",
+      "constraints": {"required": true, "minimum": 14.1, "maximum": 24.2}
+    },
+    {
+      "name": "wewnatrz_budynku",
+      "type": "boolean",
+      "trueValues": ["true"],
+      "falseValues": ["false"],
+      "x-aed-presence": "required",
+      "title": {"pl": "Wewnątrz budynku", "en": "Indoors"},
+      "description": {
+        "pl": "true – AED jest wewnątrz budynku, false – na zewnątrz.",
+        "en": "true – the AED is inside a building, false – outdoors."
+      },
+      "example": "true",
+      "constraints": {"required": true}
+    },
+    {
+      "name": "opis_lokalizacji",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Opis lokalizacji", "en": "Location description"},
+      "description": {
+        "pl": "Jak znaleźć urządzenie na miejscu, np. „hol główny, przy portierni”.",
+        "en": "How to find the device on site, e.g. \"main hall, next to the reception\"."
+      },
+      "example": "hol główny, przy portierni",
+      "constraints": {"required": true, "maxLength": 500}
+    },
+    {
+      "name": "godziny_dostepnosci",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Godziny dostępności", "en": "Availability hours"},
+      "description": {
+        "pl": "Godziny dostępności w składni OpenStreetMap opening_hours, np. 24/7 lub Mo-Fr 08:00-16:00.",
+        "en": "Availability hours in OpenStreetMap opening_hours syntax, e.g. 24/7 or Mo-Fr 08:00-16:00."
+      },
+      "example": "Mo-Fr 08:00-16:00; PH off",
+      "constraints": {"required": true, "maxLength": 255}
+    },
+    {
+      "name": "dostep_publiczny",
+      "type": "boolean",
+      "trueValues": ["true"],
+      "falseValues": ["false"],
+      "x-aed-presence": "required",
+      "title": {"pl": "Dostęp publiczny", "en": "Public access"},
+      "description": {
+        "pl": "true – dostępny dla każdego, false – tylko dla pracowników lub uprawnionych osób.",
+        "en": "true – available to anyone, false – staff or authorised persons only."
+      },
+      "example": "true",
+      "constraints": {"required": true}
+    },
+    {
+      "name": "wymaga_kodu_lub_klucza",
+      "type": "boolean",
+      "trueValues": ["true"],
+      "falseValues": ["false"],
+      "x-aed-presence": "required",
+      "title": {"pl": "Wymaga kodu lub klucza", "en": "Requires code or key"},
+      "description": {
+        "pl": "Tylko informacja, czy szafka wymaga kodu lub klucza. Nigdy nie podawaj samego kodu – przekazuje go dyspozytor.",
+        "en": "Only whether the cabinet requires a code or key. Never publish the code itself – the dispatcher provides it."
+      },
+      "example": "false",
+      "constraints": {"required": true}
+    },
+    {
+      "name": "status_urzadzenia",
+      "type": "string",
+      "x-aed-presence": "required",
+      "title": {"pl": "Status urządzenia", "en": "Device status"},
+      "description": {"pl": "Stan techniczny urządzenia.", "en": "Technical condition of the device."},
+      "example": "SPRAWNY",
+      "constraints": {"required": true, "enum": ["SPRAWNY", "NIESPRAWNY", "CZASOWO_NIEDOSTEPNY", "NIEZNANY"]},
+      "x-aed-enum-labels": {
+        "SPRAWNY": {"pl": "Sprawny", "en": "Operational"},
+        "NIESPRAWNY": {"pl": "Niesprawny", "en": "Out of order"},
+        "CZASOWO_NIEDOSTEPNY": {"pl": "Czasowo niedostępny", "en": "Temporarily unavailable"},
+        "NIEZNANY": {"pl": "Nieznany", "en": "Unknown"}
+      }
+    },
+    {
+      "name": "data_ostatniej_kontroli",
+      "type": "date",
+      "format": "default",
+      "x-aed-presence": "if_known",
+      "title": {"pl": "Data ostatniej kontroli", "en": "Last inspection date"},
+      "description": {
+        "pl": "Data ostatniej kontroli urządzenia, RRRR-MM-DD.",
+        "en": "Date of the last device inspection, YYYY-MM-DD."
+      },
+      "example": "2026-09-15",
+      "constraints": {"required": false}
+    },
+    {
+      "name": "data_waznosci_elektrod",
+      "type": "date",
+      "format": "default",
+      "x-aed-presence": "if_known",
+      "title": {"pl": "Data ważności elektrod", "en": "Electrodes expiry date"},
+      "description": {"pl": "Data ważności elektrod, RRRR-MM-DD.", "en": "Electrodes expiry date, YYYY-MM-DD."},
+      "example": "2028-03-31",
+      "constraints": {"required": false}
+    },
+    {
+      "name": "data_waznosci_baterii",
+      "type": "date",
+      "format": "default",
+      "x-aed-presence": "if_known",
+      "title": {"pl": "Data ważności baterii", "en": "Battery expiry date"},
+      "description": {"pl": "Data ważności baterii, RRRR-MM-DD.", "en": "Battery expiry date, YYYY-MM-DD."},
+      "example": "2029-01-31",
+      "constraints": {"required": false}
+    },
+    {
+      "name": "kod_teryt_gminy",
+      "type": "string",
+      "x-aed-presence": "extended",
+      "title": {"pl": "Kod TERYT gminy", "en": "TERYT municipality code"},
+      "description": {
+        "pl": "Siedmiocyfrowy kod TERC gminy z rejestru TERYT (województwo, powiat, gmina, rodzaj).",
+        "en": "Seven-digit TERC municipality code from the TERYT register."
+      },
+      "example": "1417011",
+      "constraints": {"required": false, "pattern": "^[0-9]{7}$"}
+    },
+    {
+      "name": "producent",
+      "type": "string",
+      "x-aed-presence": "extended",
+      "title": {"pl": "Producent", "en": "Manufacturer"},
+      "description": {"pl": "Producent urządzenia.", "en": "Device manufacturer."},
+      "example": "Producent Testowy",
+      "constraints": {"required": false, "maxLength": 100}
+    },
+    {
+      "name": "model",
+      "type": "string",
+      "x-aed-presence": "extended",
+      "title": {"pl": "Model", "en": "Model"},
+      "description": {"pl": "Model urządzenia.", "en": "Device model."},
+      "example": "AED-T1",
+      "constraints": {"required": false, "maxLength": 100}
+    },
+    {
+      "name": "numer_seryjny",
+      "type": "string",
+      "x-aed-presence": "extended",
+      "title": {"pl": "Numer seryjny", "en": "Serial number"},
+      "description": {"pl": "Numer seryjny urządzenia.", "en": "Device serial number."},
+      "example": "SN-TEST-0001",
+      "constraints": {"required": false, "maxLength": 100}
+    },
+    {
+      "name": "elektrody_pediatryczne",
+      "type": "boolean",
+      "trueValues": ["true"],
+      "falseValues": ["false"],
+      "x-aed-presence": "extended",
+      "title": {"pl": "Elektrody pediatryczne", "en": "Paediatric electrodes"},
+      "description": {
+        "pl": "true – przy urządzeniu są elektrody pediatryczne lub tryb dziecięcy.",
+        "en": "true – paediatric electrodes or child mode available."
+      },
+      "example": "false",
+      "constraints": {"required": false}
+    },
+    {
+      "name": "pietro",
+      "type": "integer",
+      "x-aed-presence": "extended",
+      "title": {"pl": "Piętro", "en": "Floor"},
+      "description": {
+        "pl": "Numer kondygnacji, 0 = parter, liczby ujemne = piwnice.",
+        "en": "Floor number, 0 = ground floor, negative numbers = basement."
+      },
+      "example": "0",
+      "constraints": {"required": false, "minimum": -10, "maximum": 200}
+    },
+    {
+      "name": "telefon_kontaktowy",
+      "type": "string",
+      "x-aed-presence": "extended",
+      "title": {"pl": "Telefon kontaktowy (służbowy)", "en": "Contact phone (business)"},
+      "description": {
+        "pl": "Wyłącznie służbowy numer telefonu, cyfry bez spacji, opcjonalnie z + na początku. Nie podawaj numerów prywatnych.",
+        "en": "Business phone number only, digits without spaces, optionally starting with +. Do not provide private numbers."
+      },
+      "example": "+48000000001",
+      "constraints": {"required": false, "pattern": "^\\+?[0-9]{9,15}$"}
+    }
+  ],
+  "x-aed-forbidden-fields": ["kod", "kod_szafki", "pin", "haslo", "password", "pesel", "email_prywatny", "imie_nazwisko"],
+  "x-aed-forbidden-reason": {
+    "pl": "Otwarte dane i RODO: plik nie może zawierać kodów do szafek ani danych osobowych. Kod do szafki podaje dyspozytor.",
+    "en": "Open data and GDPR: the file must not contain cabinet codes or personal data. The cabinet code is provided by the dispatcher."
+  },
+  "x-aed-source-priority": ["WLASCICIEL", "JST", "APLIKACJA", "INNE", "OSM"],
+  "x-aed-file-rules": [
+    {"pl": "Plik CSV w kodowaniu UTF-8.", "en": "CSV file encoded in UTF-8."},
+    {"pl": "Separator pól: przecinek.", "en": "Field separator: comma."},
+    {"pl": "Dokładnie jeden wiersz nagłówka z nazwami kolumn ze schematu.", "en": "Exactly one header row with column names from the schema."},
+    {"pl": "Każdy wiersz ma tyle samo komórek co nagłówek.", "en": "Every row has the same number of cells as the header."},
+    {"pl": "Bez pustych kolumn i pustych wierszy.", "en": "No empty columns and no empty rows."},
+    {"pl": "Jedna wartość w komórce.", "en": "One value per cell."},
+    {"pl": "Adres w osobnych polach: miejscowość, ulica, numer budynku, kod pocztowy.", "en": "Address split into separate fields: locality, street, building number, postal code."},
+    {"pl": "Daty w formacie ISO RRRR-MM-DD.", "en": "Dates in ISO format YYYY-MM-DD."},
+    {"pl": "Wartości logiczne: true lub false.", "en": "Boolean values: true or false."},
+    {"pl": "Liczby z kropką dziesiętną, bez separatorów tysięcy.", "en": "Numbers with a dot as decimal separator, no thousands separators."},
+    {"pl": "Współrzędne w układzie WGS84 (EPSG:4326).", "en": "Coordinates in WGS84 (EPSG:4326)."},
+    {"pl": "Kolumny „wymagane” muszą być wypełnione; kolumny „jeśli znane” muszą istnieć, komórka może być pusta; kolumny rozszerzone są opcjonalne.", "en": "\"Required\" columns must be filled; \"if known\" columns must exist but cells may be empty; extended columns are optional."},
+    {"pl": "Zakazane kolumny (kody, PIN-y, hasła, dane osobowe) powodują odrzucenie pliku.", "en": "Forbidden columns (codes, PINs, passwords, personal data) cause the file to be rejected."},
+    {"pl": "XLSX jest akceptowany jako format wejściowy (pierwszy arkusz, bez makr); zbiór krajowy jest publikowany jako CSV i GeoJSON.", "en": "XLSX is accepted as an input format (first sheet, no macros); the national dataset is published as CSV and GeoJSON."},
+    {"pl": "Gotowość urządzenia nie jest polem pliku – oblicza ją API w chwili zapytania.", "en": "Device readiness is not a file field – the API computes it at request time."}
+  ],
+  "x-aed-examples": [
+    {
+      "id_aed": "OTW-0001", "dysponent": "Urząd Miasta Testowego", "zrodlo_danych": "JST", "zrodlo_id": "",
+      "data_aktualizacji": "2026-10-01", "status_weryfikacji": "ZWERYFIKOWANY", "nazwa_obiektu": "Dworzec Testowy",
+      "miejscowosc": "Otwock", "ulica": "ul. Testowa", "nr_budynku": "1", "kod_pocztowy": "05-400",
+      "szerokosc_geograficzna": "52.1050", "dlugosc_geograficzna": "21.2600", "wewnatrz_budynku": "true",
+      "opis_lokalizacji": "hol główny, przy kasach", "godziny_dostepnosci": "24/7", "dostep_publiczny": "true",
+      "wymaga_kodu_lub_klucza": "false", "status_urzadzenia": "SPRAWNY", "data_ostatniej_kontroli": "2026-09-15",
+      "data_waznosci_elektrod": "2028-03-31", "data_waznosci_baterii": "2029-01-31"
+    },
+    {
+      "id_aed": "WAW-0001", "dysponent": "Przychodnia Testowa Sp. z o.o.", "zrodlo_danych": "WLASCICIEL", "zrodlo_id": "",
+      "data_aktualizacji": "2026-09-20", "status_weryfikacji": "ZWERYFIKOWANY", "nazwa_obiektu": "Przychodnia Testowa nr 1",
+      "miejscowosc": "Warszawa", "ulica": "ul. Przykładowa", "nr_budynku": "10A", "kod_pocztowy": "00-001",
+      "szerokosc_geograficzna": "52.2297", "dlugosc_geograficzna": "21.0122", "wewnatrz_budynku": "true",
+      "opis_lokalizacji": "parter, przy rejestracji", "godziny_dostepnosci": "Mo-Fr 08:00-18:00; Sa 09:00-13:00; PH off",
+      "dostep_publiczny": "false", "wymaga_kodu_lub_klucza": "true", "status_urzadzenia": "SPRAWNY",
+      "data_ostatniej_kontroli": "2026-08-01", "data_waznosci_elektrod": "2027-06-30", "data_waznosci_baterii": "2028-12-31"
+    },
+    {
+      "id_aed": "KRK-0001", "dysponent": "Fundacja Testowa", "zrodlo_danych": "OSM", "zrodlo_id": "node/100000001",
+      "data_aktualizacji": "2026-07-10", "status_weryfikacji": "NIEZWERYFIKOWANY", "nazwa_obiektu": "Hala Sportowa Testowa",
+      "miejscowosc": "Kraków", "ulica": "", "nr_budynku": "", "kod_pocztowy": "",
+      "szerokosc_geograficzna": "50.0647", "dlugosc_geograficzna": "19.9450", "wewnatrz_budynku": "false",
+      "opis_lokalizacji": "ściana zewnętrzna przy wejściu głównym", "godziny_dostepnosci": "24/7", "dostep_publiczny": "true",
+      "wymaga_kodu_lub_klucza": "false", "status_urzadzenia": "NIEZNANY", "data_ostatniej_kontroli": "",
+      "data_waznosci_elektrod": "", "data_waznosci_baterii": ""
+    }
+  ]
+}

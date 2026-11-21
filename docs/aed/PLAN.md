@@ -1,6 +1,6 @@
 # Misja AED – plan prac (prototyp na dane.gov.pl)
 
-Status: **Faza 0 – plan czeka na akceptację.** Kod nie został jeszcze zmieniony.
+Status: **Plan zaakceptowany 2026-11-21 (wszystkie rekomendacje z sekcji 4). Faza 1 zakończona.** Gałąź: `feature/aed`.
 Data: 2026-11-21
 
 ---
@@ -179,7 +179,7 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 ## 5. Postęp
 
 - [x] Faza 0 – eksploracja i plan (2026-11-21)
-- [ ] Faza 1
+- [x] Faza 1 – schemat v1, loader, generatory CSV/XLSX, `export_aed_standard` (2026-11-21)
 - [ ] Faza 2
 - [ ] Faza 3
 - [ ] Faza 4
@@ -190,3 +190,26 @@ Po każdej fazie: testy + lint → commit → aktualizacja sekcji „Postęp” 
 - Django 2.2 / Python 3.8 – bez `match`, bez `zoneinfo` w stdlib → strefa przez `django.utils.timezone` + `pytz` (jest w zależnościach Django 2.2).
 - Elasticsearch 6.x (django-elasticsearch-dsl 6.4) – `geotile_grid` dostępne od ES 7.0; jeśli klaster jest 6.x, użyjemy `geohash_grid` (sprawdzę wersję w fazie 3).
 - Geokodowanie adresu przez publiczny Nominatim (już używany w portalu) – limity użycia, zostaje jako znane ograniczenie.
+
+### Decyzje po akceptacji (2026-11-21)
+Przyjęte rekomendacje z sekcji 4: (1) klastrowanie po stronie serwera, bez `leaflet.markercluster`; (2) `@playwright/test` jako devDependency frontendu do zrzutów ekranu; (3) fikcyjna instytucja „Krajowy rejestr AED (prototyp)”; (4) licencja CC BY 4.0; (5) warunkowy krok w `entrypoint_process_resource_file_validation_task`; (6) brak `data_ostatniej_kontroli` → `NIEZNANY`.
+
+### Faza 1 – co zrobiono
+- `mcod/aed/` (app `AedConfig`, w `INSTALLED_APPS`), ustawienia `AED_*` na końcu `mcod/settings/base.py` (`AED_ENABLED=False` domyślnie, `True` w `mcod/settings/test.py`).
+- `mcod/aed/schema/aed_v1.json` – schemat (22 pola podstawowe + 7 rozszerzonych, słowniki z etykietami PL/EN, pola zakazane, priorytet źródeł, zasady pliku, 3 fikcyjne przykłady). `mcod/aed/schema/__init__.py` – jedyny loader listy pól (+ `normalize_header`, `is_forbidden_header`, `frictionless_schema`).
+- `mcod/aed/export.py` – CSV (UTF-8 bez BOM), XLSX (`dane` z listami rozwijanymi dla słowników/booleanów i komórkami tekstowymi, `opis_pol`, `slowniki`, `zasady_pliku`), JSON.
+- `manage.py export_aed_standard --out <dir>`; wygenerowane pliki skopiowane do `docs/aed/`.
+- Testy: `mcod/aed/tests/test_schema.py`, `test_export.py` – 57 passed. Lint (isort/black/flake8 w wersjach z pre-commit) – OK.
+
+### Jak uruchamiać (Windows, ten checkout)
+- `sh docs/aed/scripts/backend.sh test -n1 mcod/aed/tests --no-cov -p no:cacheprovider`
+- `sh docs/aed/scripts/lint_backend.sh [--fix]`
+- Eksport: `sh docs/aed/scripts/backend.sh run python manage.py export_aed_standard --out data/aed_export && cp backend_latest/data/aed_export/* docs/aed/`
+
+### Znane problemy (środowisko)
+- **Działający stack Dockera (`mcod-api`, `mcod-admin`, `mcod-celery`…) montuje kod z `C:\Users\mwliv\IdeaProjects\backend_latest`, nie z `hacknation/backend_latest`.** Żeby zobaczyć zmiany AED w działającym API/adminie, trzeba uruchomić stack z tego katalogu (albo przepiąć montowania). Nazwa projektu compose jest ta sama (`backend_latest`), dlatego skrypty używają `--no-deps`.
+- `core.autocrlf=true` → skrypty `.sh` w repo mają CRLF; `docker compose build` obrazu testowego się wywraca (`distrust-emudhra-roots: not found`), a `tests-entrypoint.sh` nie startuje. Obejście w `docs/aed/scripts/backend.sh` (istniejący obraz `mcod-app:local-tests` + `tr -d '\r'`). Plików portalu nie zmieniałem.
+- `black` nie jest zainstalowany w obrazie – `lint_backend.sh` instaluje go tymczasowo w kontenerze.
+
+### Następny krok: Faza 2
+`Resource.data_standard` (migracja + form/admin/ES/serializery), tag AED, `opening_hours.py`, `validation.py` + fixtures po jednym na regułę, `AedValidationReport`, zadanie Celery i wpięcie w pipeline, zakładka w adminie, endpointy `validate`, `schema`, `template.*`, `reports/{id}`, `config`.

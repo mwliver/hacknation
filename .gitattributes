@@ -1,0 +1,2 @@
+docs/aed/*.csv -text
+docs/aed/scripts/*.sh text eol=lf

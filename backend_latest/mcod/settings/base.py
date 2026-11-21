@@ -160,6 +160,7 @@ INSTALLED_APPS = [
     "mcod.showcases",
     "mcod.submissions",
     "mcod.logingovpl",
+    "mcod.aed",
 ]
 
 CMS_MIDDLEWARE = ["mcod.cms.middleware.CounterMiddleware"] if COMPONENT == "cms" else []
@@ -2357,3 +2358,14 @@ GENERIC_SUBMISSION_STAGING_ROOT = env.str(
 )
 GENERIC_SUBMISSION_EMAIL_MAX_RETRIES = env.int("GENERIC_SUBMISSION_EMAIL_MAX_RETRIES", default=3)
 GENERIC_SUBMISSION_EMAIL_RETRY_DELAY = env.int("GENERIC_SUBMISSION_EMAIL_RETRY_DELAY", default=60)
+
+# AED – "Misja AED" prototype (defibrillators data standard and national dataset).
+# Disabled by default: with AED_ENABLED=False no AED routes, tasks or form fields are active.
+AED_ENABLED = env.bool("AED_ENABLED", default=False)
+AED_CAMPAIGN_NAME = env.str("AED_CAMPAIGN_NAME", default="Misja AED")
+AED_CAMPAIGN_SLOGAN = env.str("AED_CAMPAIGN_SLOGAN", default="Dane na ratunek")
+AED_CAMPAIGN_LOGO_URL = env.str("AED_CAMPAIGN_LOGO_URL", default="")
+AED_MAX_ROWS = env.int("AED_MAX_ROWS", default=50_000)
+AED_VALIDATE_MAX_FILE_SIZE = env.int("AED_VALIDATE_MAX_FILE_SIZE", default=10 * 1024 * 1024)  # 10 MB
+AED_VALIDATE_RATE_LIMITS = env.str("AED_VALIDATE_RATE_LIMITS", default="10/minute, 200/day")
+AED_NATIONAL_ORGANIZATION_ID = env.int("AED_NATIONAL_ORGANIZATION_ID", default=None)
