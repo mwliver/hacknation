@@ -47,6 +47,6 @@
 - Feature flag frontendu opiera się na `GET /aed/config` (backend `AED_ENABLED`), a nie na serwerze Unleash, który
   lokalnie jest niedostępny.
 - Testy e2e (Playwright) używają zamockowanego API; pełny test integracyjny z działającym stosem wymaga uruchomienia
-  backendu z tego repozytorium (patrz `PLAN.md` – znane problemy środowiska).
+  backendu z tego repozytorium.
 - Nazwa akcji, hasło i logo są placeholderami (`AED_CAMPAIGN_NAME`, `AED_CAMPAIGN_SLOGAN`, `AED_CAMPAIGN_LOGO_URL`) –
   przygotowuje je zespół.

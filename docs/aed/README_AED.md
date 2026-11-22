@@ -71,7 +71,7 @@ Przycisk panelu dostawcy w środowisku lokalnym otwiera `https://admin.mcod.loca
 loguje się przez formularz na tej stronie; konta lokalne nie działają w produkcyjnym panelu dane.gov.pl.
 
 Na Windowsie (checkout z `core.autocrlf=true`) do testów backendu służą skrypty
-`docs/aed/scripts/backend.sh` i `docs/aed/scripts/lint_backend.sh` (opis w `PLAN.md`).
+`docs/aed/scripts/backend.sh` i `docs/aed/scripts/lint_backend.sh`.
 
 ### Testy
 
@@ -106,7 +106,6 @@ AED `NIESPRAWNY` są ukryte; AED o gotowości `NIEZNANY` są pokazywane („leps
 
 ## Pliki dokumentacji
 
-- `PLAN.md` – plan, decyzje, postęp faz, znane problemy środowiska,
 - `KROKI_UZYTKOWNIKA.md` – kroki obywatela, dyspozytora i dysponenta danych,
 - `OGRANICZENIA.md` – ograniczenia prototypu,
 - `ZRZUTY_EKRANU.md` – lista ekranów do prezentacji (+ `screenshots/`),
