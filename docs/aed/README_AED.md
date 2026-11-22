@@ -67,6 +67,9 @@ cd frontend_latest && npm install && npm run start-local
 # http://localhost:4200/pl/aed
 ```
 
+Przycisk panelu dostawcy w środowisku lokalnym otwiera `https://admin.mcod.local`. Lokalny superużytkownik
+loguje się przez formularz na tej stronie; konta lokalne nie działają w produkcyjnym panelu dane.gov.pl.
+
 Na Windowsie (checkout z `core.autocrlf=true`) do testów backendu służą skrypty
 `docs/aed/scripts/backend.sh` i `docs/aed/scripts/lint_backend.sh` (opis w `PLAN.md`).
 

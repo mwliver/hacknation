@@ -1,4 +1,4 @@
-import { isPlatformBrowser, NgClass, NgFor, NgIf } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   Component,
   computed,
@@ -21,10 +21,10 @@ import { AedValidationReportComponent } from '@app/pages/aed/components/validati
 import { AedSchema, AedSchemaField, AedValidationReport } from '@app/pages/aed/services/aed.models';
 import { AedService } from '@app/pages/aed/services/aed.service';
 import { SeoService } from '@app/services/seo.service';
+import { environment } from '@env/environment';
 
 export const AED_ALLOWED_EXTENSIONS = ['csv', 'xlsx'];
 export const AED_MAX_FILE_SIZE_MB = 10;
-export const AED_ADMIN_PANEL_URL = 'https://admin.dane.gov.pl';
 
 /** Data provider wizard /aed/udostepnij: template -> upload & check -> report -> how to publish. */
 @Component({
@@ -48,6 +48,7 @@ export class AedShareComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly seo = inject(SeoService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly document = inject(DOCUMENT);
 
   @ViewChildren('stepHeading') stepHeadings: QueryList<ElementRef<HTMLElement>>;
 
@@ -59,7 +60,9 @@ export class AedShareComponent implements OnInit {
   readonly validating = signal(false);
   readonly report = signal<AedValidationReport | null>(null);
   readonly reportForResource = signal<string | null>(null);
-  readonly adminPanelUrl = AED_ADMIN_PANEL_URL;
+  readonly adminPanelUrl = environment.production
+    ? `${this.document.location.protocol}//admin.${this.document.location.hostname.replace('www.', '')}`
+    : 'https://admin.mcod.local';
   readonly maxSizeMb = AED_MAX_FILE_SIZE_MB;
 
   private readonly lang = toSignal(this.translate.onLangChange.pipe(map((e) => e.lang)), {

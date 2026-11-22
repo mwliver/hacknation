@@ -165,6 +165,16 @@ test.describe('AED – mapa i najbliższe AED', () => {
 });
 
 test.describe('AED – kreator dysponenta', () => {
+  test('panel administratora w środowisku lokalnym', async ({ page }) => {
+    await mockApi(page);
+    await page.goto('/pl/aed/udostepnij');
+    await page.locator('[data-test="aed-step-4"]').click();
+    await expect(page.getByRole('link', { name: /Przejdź do panelu dostawcy/ })).toHaveAttribute(
+      'href',
+      'https://admin.mcod.local',
+    );
+  });
+
   test('plik z błędami → raport, poprawiony plik → zgodny ze standardem → instrukcja publikacji', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await mockApi(page);
